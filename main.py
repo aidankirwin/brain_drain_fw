@@ -1,32 +1,31 @@
 import sys
-import signal
 import time
-from threading import Thread
+import signal
+import threading
+import tkinter as tk
 
 from gpiozero import LED
 from gpiozero.pins.lgpio import LGPIOFactory
-from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout
-from PyQt6.QtCore import Qt
 
 # -----------------------
 # GPIO SETUP
 # -----------------------
 
-# Use lgpio explicitly (Pi 5 safe)
 factory = LGPIOFactory()
 
-TEST_PIN = 18
+TEST_PIN = 17  # BCM numbering
 led = LED(TEST_PIN, pin_factory=factory)
 
 gpio_state = False
+running = True
 
 
 def gpio_test_loop():
     """
-    Background thread toggling GPIO every second
+    Background thread toggles GPIO every second
     """
-    global gpio_state
-    while True:
+    global gpio_state, running
+    while running:
         gpio_state = not gpio_state
         if gpio_state:
             led.on()
@@ -36,32 +35,45 @@ def gpio_test_loop():
 
 
 # -----------------------
-# QT GUI
+# TKINTER UI
 # -----------------------
 
-class MainWindow(QWidget):
-    def __init__(self):
-        super().__init__()
+class App:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("BrainDrain Hardware Test")
+        self.root.attributes("-fullscreen", True)
 
-        self.setWindowTitle("BrainDrain Hardware Test")
-        self.setMinimumSize(800, 480)
+        # Main frame
+        frame = tk.Frame(root)
+        frame.pack(expand=True)
 
-        self.label = QLabel("GPIO Status: OFF")
-        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.label.setStyleSheet("font-size: 24px;")
+        self.label = tk.Label(
+            frame,
+            text="GPIO Status: OFF",
+            font=("Arial", 24)
+        )
+        self.label.pack(pady=20)
 
-        self.button = QPushButton("Toggle GPIO")
-        self.button.setStyleSheet("font-size: 20px; padding: 20px;")
-        self.button.clicked.connect(self.toggle_gpio)
+        self.button = tk.Button(
+            frame,
+            text="Toggle GPIO",
+            font=("Arial", 20),
+            command=self.toggle_gpio,
+            width=20,
+            height=2
+        )
+        self.button.pack(pady=20)
 
-        layout = QVBoxLayout()
-        layout.addWidget(self.label)
-        layout.addWidget(self.button)
+        self.exit_button = tk.Button(
+            frame,
+            text="Exit",
+            font=("Arial", 16),
+            command=self.shutdown
+        )
+        self.exit_button.pack(pady=20)
 
-        self.setLayout(layout)
-
-        # Timer update loop
-        self.startTimer(500)
+        self.update_ui()
 
     def toggle_gpio(self):
         global gpio_state
@@ -71,11 +83,16 @@ class MainWindow(QWidget):
         else:
             led.off()
 
-    def timerEvent(self, event):
+    def update_ui(self):
         if gpio_state:
-            self.label.setText("GPIO Status: ON")
+            self.label.config(text="GPIO Status: ON")
         else:
-            self.label.setText("GPIO Status: OFF")
+            self.label.config(text="GPIO Status: OFF")
+
+        self.root.after(500, self.update_ui)
+
+    def shutdown(self):
+        cleanup()
 
 
 # -----------------------
@@ -83,9 +100,13 @@ class MainWindow(QWidget):
 # -----------------------
 
 def cleanup(*args):
+    global running
     print("Shutting down safely...")
+
+    running = False
     led.off()
     led.close()
+
     sys.exit(0)
 
 
@@ -98,18 +119,16 @@ signal.signal(signal.SIGINT, cleanup)
 # -----------------------
 
 def main():
-    print("BrainDrain starting...")
+    print("BrainDrain starting (Tkinter)...")
 
     # Start GPIO test thread
-    thread = Thread(target=gpio_test_loop, daemon=True)
+    thread = threading.Thread(target=gpio_test_loop, daemon=True)
     thread.start()
 
-    # Start Qt app
-    app = QApplication(sys.argv)
-    window = MainWindow()
-    window.showFullScreen()  # Good for kiosk mode
-
-    sys.exit(app.exec())
+    # Start Tkinter UI
+    root = tk.Tk()
+    app = App(root)
+    root.mainloop()
 
 
 if __name__ == "__main__":
