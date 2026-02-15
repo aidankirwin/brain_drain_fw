@@ -1,5 +1,9 @@
 from gpiozero import DigitalOutputDevice
+from gpiozero.pins.lgpio import LGPIOFactory
+from gpiozero import Device
 import time
+
+Device.pin_factory = LGPIOFactory()
 
 print('Hello world!')
 
