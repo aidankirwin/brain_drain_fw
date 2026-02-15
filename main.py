@@ -101,7 +101,7 @@ class App:
 
 def cleanup(*args):
     global running
-    logging.info("Shutting down safely...")
+    print("Shutting down safely...")
 
     running = False
     led.off()
@@ -119,7 +119,7 @@ signal.signal(signal.SIGINT, cleanup)
 # -----------------------
 
 def main():
-    logging.info("Brain Drain starting...")
+    print("Brain Drain starting...")
 
     # Start GPIO test thread
     thread = threading.Thread(target=gpio_test_loop, daemon=True)
