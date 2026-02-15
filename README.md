@@ -45,7 +45,7 @@ After=graphical.target
 User=brain
 Environment=DISPLAY=:0
 Environment=XAUTHORITY=/home/brain/.Xauthority
-ExecStart=/home/brain/pump-brain_drain_fw/venv/bin/python /home/brain/brain_drain_fw/main.py
+ExecStart=/home/brain/brain_drain_fw/venv/bin/python /home/brain/brain_drain_fw/main.py
 WorkingDirectory=/home/brain/brain_drain_fw
 Restart=always
 RestartSec=2
