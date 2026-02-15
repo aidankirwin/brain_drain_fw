@@ -8,6 +8,21 @@ from gpiozero import LED
 from gpiozero.pins.lgpio import LGPIOFactory
 
 # -----------------------
+# LOGGING
+# -----------------------
+import logging
+import sys
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[
+        logging.FileHandler("/home/brain/brain_drain_fw/logs/gui.log"),
+        logging.StreamHandler(sys.stdout)
+    ]
+)
+
+# -----------------------
 # GPIO SETUP
 # -----------------------
 
@@ -101,7 +116,7 @@ class App:
 
 def cleanup(*args):
     global running
-    print("Shutting down safely...")
+    logging.info("Shutting down safely...")
 
     running = False
     led.off()
@@ -119,7 +134,7 @@ signal.signal(signal.SIGINT, cleanup)
 # -----------------------
 
 def main():
-    print("BrainDrain starting (Tkinter)...")
+    logging.info("Brain Drain starting...")
 
     # Start GPIO test thread
     thread = threading.Thread(target=gpio_test_loop, daemon=True)
