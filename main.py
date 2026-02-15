@@ -41,6 +41,7 @@ def gpio_test_loop():
 class App:
     def __init__(self, root):
         self.root = root
+        self.root.update_idletasks()
         self.root.title("BrainDrain Hardware Test")
         self.root.attributes("-fullscreen", True)
 
