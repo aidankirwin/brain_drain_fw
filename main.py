@@ -8,21 +8,6 @@ from gpiozero import LED
 from gpiozero.pins.lgpio import LGPIOFactory
 
 # -----------------------
-# LOGGING
-# -----------------------
-import logging
-import sys
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s",
-    handlers=[
-        logging.FileHandler("/home/brain/brain_drain_fw/logs/gui.log"),
-        logging.StreamHandler(sys.stdout)
-    ]
-)
-
-# -----------------------
 # GPIO SETUP
 # -----------------------
 
