@@ -13,7 +13,7 @@ from gpiozero.pins.lgpio import LGPIOFactory
 
 factory = LGPIOFactory()
 
-TEST_PIN = 17  # BCM numbering
+TEST_PIN = 17
 led = LED(TEST_PIN, pin_factory=factory)
 
 gpio_state = False
