@@ -3,11 +3,10 @@ import tkinter as tk
 from layout import LayoutDesigns
 
 from dataCollect import DataBuffer
-from app import App
 
 class ICPWaveform(LayoutDesigns):
 
-    def __init__(self, parent, controller : App, data_buffer : DataBuffer):
+    def __init__(self, parent, controller, data_buffer : DataBuffer):
         super().__init__(parent, controller)
         self.controller = controller
         self.data_buffer = data_buffer
