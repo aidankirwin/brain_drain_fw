@@ -1,12 +1,9 @@
 import tkinter as tk
-
 from layout import LayoutDesigns
-
-from dataCollect import DataBuffer
 
 class ICPWaveform(LayoutDesigns):
 
-    def __init__(self, parent, controller, data_buffer : DataBuffer):
+    def __init__(self, parent, controller, data_buffer=None):
         super().__init__(parent, controller)
         self.controller = controller
         self.data_buffer = data_buffer
@@ -18,8 +15,6 @@ class ICPWaveform(LayoutDesigns):
         # State tracking
         self.active_widget = None
         self.is_draining = True
-
-        self.target_icp_value = None
         
         self.colour_header(title="ICP-Based Drainage", card_bg="#38B380")
         self.setup_ui()
@@ -42,23 +37,25 @@ class ICPWaveform(LayoutDesigns):
             ]
 
             label_margin = 8  # pixels to clamp labels away from canvas edges
+            label_margin = 8  # pixels to clamp labels away from canvas edges
             for val in scale_values:
                 # Convert ICP value to Y coordinate using the same formula as the waveform
                 normalized = (val - scaled_min) / (scaled_max - scaled_min)
                 y = self.waveform_height - int(normalized * (self.waveform_height - 1))
+                # Clamp label y so text is not cut off at top or bottom
+                y_label = max(label_margin, min(self.waveform_height - label_margin, y))
 
-                # Draw tick mark
-                self.waveform.create_line(0, y, 10, y, fill="black", tags="y_axis")
-
-                # Draw label
-                self.waveform.create_text(
-                    20, y,
+                # Draw label right-aligned, with a small tick pointing toward the waveform
+                self.y_axis_canvas.create_text(
+                    38, y_label,
                     text=f"{val:.1f}",
-                    anchor="w",
+                    anchor="e",
                     font=("Helvetica", 12),
                     fill="black",
                     tags="y_axis"
                 )
+                # Tick mark at the right edge of the label canvas
+                self.y_axis_canvas.create_line(40, y, 45, y, fill="black", tags="y_axis")
 
                 # Clamp label y so text is not cut off at top or bottom
                 y_label = max(label_margin, min(self.waveform_height - label_margin, y))
@@ -179,9 +176,6 @@ class ICPWaveform(LayoutDesigns):
                 widget.insert(tk.END, val, ("big_font", "val"))
         
         widget.configure(state="disabled")
-    
-    def update_current_volume(self):
-        self.waveform.after(30, self.update_waveform)
 
     def dismiss_numpad(self, event=None):
     # Only hide if the click wasn't inside the numpad itself
@@ -199,7 +193,7 @@ class ICPWaveform(LayoutDesigns):
         grid_container.pack(pady=(40, 10), padx=20, fill="x")
 
         # --- CURRENT ICP ---
-        self.current_icp = tk.Text(grid_container, bg="white", fg="#4FA542", height=8, width=15, 
+        self.current_icp = tk.Text(grid_container, bg="white", fg="#4FA542", height=2, width=15, 
                                    borderwidth=0, padx=10, pady=10, highlightthickness=0)
         self.current_icp.grid(row=0, column=0, rowspan=2, sticky="nsew", padx=(1,1), pady=(1,1))
         
@@ -207,15 +201,14 @@ class ICPWaveform(LayoutDesigns):
         self.current_icp.tag_configure('normal_font', font=('Helvetica', 20), justify='center')
         self.current_icp.tag_configure('small_font', font=('Helvetica', 16), justify='right')
         
+
         self.current_icp.insert(tk.END, "\n", "small_font")
         self.current_icp.insert(tk.END, "Current ICP:\n", "normal_font")
-        self.current_icp.insert(tk.END, "10", "big_font")
+        self.current_icp.insert(tk.END, "10\n", "big_font")
         self.current_icp.insert(tk.END, "mmHg\n", "small_font")
-        
-        self.current_icp.configure(state='disabled')
 
         # --- TARGET ICP ---
-        self.target_icp = tk.Text(grid_container, bg="white", fg="black", height=8, width=20, 
+        self.target_icp = tk.Text(grid_container, bg="white", fg="black", height=2, width=20, 
                                   borderwidth=0, padx=10, pady=5, highlightthickness=0)
         self.target_icp.grid(row=0, column=1, rowspan=2, sticky="nsew", padx=(0,1), pady=(1,0))
         
@@ -240,7 +233,7 @@ class ICPWaveform(LayoutDesigns):
         for i in range(3): grid_container.rowconfigure(i, weight=1)
 
         # --- VOLUME BOXES (Static) ---
-        vdbag = tk.Text(grid_container, bg="white", fg="black", height=8, borderwidth=0, highlightthickness=0, padx=10, pady=5)
+        vdbag = tk.Text(grid_container, bg="white", fg="black", height=2, borderwidth=0, highlightthickness=0, padx=10, pady=5)
         vdbag.grid(row=2, column=0, sticky="nsew", padx=(1,0), pady=(0,1))
         vdbag.tag_configure('normal_font', font=('Helvetica', 20), justify='right')
         vdbag.insert(tk.END, "\nVolume in \nDrainage Bag:\n", "normal_font")
@@ -250,9 +243,6 @@ class ICPWaveform(LayoutDesigns):
         vdbagnum.grid(row=2, column=1, sticky="nsew", padx=(0,1), pady=(1,1))
         vdbagnum.tag_configure('big_font', font=('Helvetica', 70), justify='left')
         vdbagnum.tag_configure('normal_font', font=('Helvetica', 20), justify='left')
-
-        vdbagnum.insert(tk.END, "\n", "small_font")
-        
         vdbagnum.insert(tk.END, "150", "big_font")
         vdbagnum.insert(tk.END, "ml", "normal_font")
         vdbagnum.configure(state="disabled")
@@ -272,13 +262,13 @@ class ICPWaveform(LayoutDesigns):
         self.waveform = tk.Canvas(
             grid_container_2,
             bg="white",
-            height=350
+            height=200
         )
-        self.waveform.pack(fill="both", expand=True, padx=1, pady=1)
+        self.waveform.pack(side="left", fill="x", expand=True, padx=(0, 1), pady=1)
 
         # For waveform drawing
         self.waveform_width = 800
-        self.waveform_height = 300
+        self.waveform_height = 200
         self.waveform_buffer = [20] * self.waveform_width  # Start with midline
 
         # --- BOTTOM BUTTONS ---
@@ -287,10 +277,10 @@ class ICPWaveform(LayoutDesigns):
         self.set_btn.place(relx=0.82, rely=0.92, anchor="center")
         self.set_btn.bind("<Button-1>", self.toggle_drainage)
 
-        # mode_btn = tk.Label(self, text="Switch Mode", font=("Helvetica", 20), bg="#F3EAF9", 
-        #                     fg="#8e44ad", width=15, height=2, highlightthickness=1, highlightbackground="#8e44ad")
-        # mode_btn.place(relx=0.2, rely=0.92, anchor="center")
-        # mode_btn.bind("<Button-1>", lambda e: self.controller.show("VolumeWaveform"))
+        mode_btn = tk.Label(self, text="Switch Mode", font=("Helvetica", 20), bg="#F3EAF9", 
+                            fg="#8e44ad", width=15, height=2, highlightthickness=1, highlightbackground="#8e44ad")
+        mode_btn.place(relx=0.2, rely=0.92, anchor="center")
+        mode_btn.bind("<Button-1>", lambda e: self.controller.show("VolumeWaveform"))
 
         # Bind to the main screen background
         self.bind("<Button-1>", self.dismiss_numpad)
@@ -317,15 +307,6 @@ class ICPWaveform(LayoutDesigns):
         if display_batch is None:
             self.waveform.after(30, self.update_waveform)
             return
-        
-        # update the "current ICP" text
-        self.current_icp.configure(state=tk.NORMAL)
-        self.current_icp.delete("1.0", tk.END)
-        self.current_icp.insert(tk.END, "\n", "small_font")
-        self.current_icp.insert(tk.END, "Current ICP:\n", "normal_font")
-        self.current_icp.insert(tk.END, str(sum(display_batch) / len(display_batch)), "big_font")
-        self.current_icp.insert(tk.END, "mmHg\n", "small_font")
-        self.current_icp.config(state=tk.DISABLED)
         
         # Append new points into the sliding waveform window
         for icp_val in display_batch:
