@@ -54,6 +54,7 @@ class App:
 
     def update_target_icp(self, new_value):
         """Update the target ICP value in MotorControl from GUI."""
+        self.target_icp = new_value
         self.motor_control.update_target_icp(new_value)
 
     def show(self, screen_name):
