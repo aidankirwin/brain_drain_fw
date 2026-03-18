@@ -45,10 +45,10 @@ class DataBuffer(threading.Thread):
 
     def run(self):
         next_time = time.perf_counter()
-    
-        loop_start = time.perf_counter()
 
         while self.running:
+            loop_start = time.perf_counter()
+            
             for ch in self.channels:
                 value = self.read_channel(ch)
 
