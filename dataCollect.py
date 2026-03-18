@@ -45,6 +45,8 @@ class DataBuffer(threading.Thread):
 
     def run(self):
         next_time = time.perf_counter()
+    
+        loop_start = time.perf_counter()
 
         while self.running:
             for ch in self.channels:
@@ -61,6 +63,15 @@ class DataBuffer(threading.Thread):
                 elif ch == 3:
                     self.add_data(self.display_load2_buffer, value)
                     self.add_data(self.control_load2_buffer, value)
+
+            loop_end = time.perf_counter()
+
+            # ---- measurements ----
+            loop_period = loop_end - loop_start
+
+            print(
+                f"Loop period: {loop_period:.6f}s | "
+            )
 
             # ---- timing control ----
             next_time += self.period
