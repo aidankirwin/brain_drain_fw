@@ -36,7 +36,7 @@ class MotorControl(threading.Thread):
 
     def fetch_drainage_state(self, is_draining):
         self.is_draining = is_draining
-        print(f"Updated drainage state to: {'Draining' if self.is_draining else 'Not Draining'}")
+        print(f"{'Draining' if self.is_draining else 'Not Draining WOOOOOOOO'}")
     
     def stop(self):
         self.running = False
