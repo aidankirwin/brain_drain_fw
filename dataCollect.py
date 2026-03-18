@@ -21,7 +21,7 @@ class DataBuffer(threading.Thread):
     def run(self):
         while self.running:
             # read from ads1115
-            value = 15
+            value = 20
 
             self.add_data_display(value)
             self.add_data_control(value)
