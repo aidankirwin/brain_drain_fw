@@ -189,7 +189,7 @@ class ICPWaveform(LayoutDesigns):
 
         self.current_icp.insert(tk.END, "\n", "small_font")
         self.current_icp.insert(tk.END, "Current ICP:\n", "normal_font")
-        self.current_icp.insert(tk.END, "10\n", "big_font")
+        self.current_icp.insert(tk.END, "10", "big_font")
         self.current_icp.insert(tk.END, "mmHg\n", "small_font")
 
         # --- TARGET ICP ---
