@@ -69,9 +69,7 @@ class DataBuffer(threading.Thread):
             # ---- measurements ----
             loop_period = loop_end - loop_start
 
-            print(
-                f"Loop period: {loop_period:.6f}s | "
-            )
+            # print(f"Loop period: {loop_period:.6f}s | ")
 
             # ---- timing control ----
             next_time += self.period
