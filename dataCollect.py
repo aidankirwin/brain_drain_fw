@@ -2,9 +2,7 @@ import threading
 import time
 
 class DataBuffer(threading.Thread):
-    def __init__(self, sensor_read):
-        # Replace with actual sensor reads when ready
-        self.sensor_read = sensor_read
+    def __init__(self):
         super().__init__(daemon=True)   # daemon=True for simulation
         # Start sampling/buffering data immediately upon initialization
         self.running = True
@@ -18,7 +16,8 @@ class DataBuffer(threading.Thread):
     def run(self):
         while self.running:
             # read from ads1115
-            value = getattr(self.sensor_read, 'icp', 12)  # Get new data point from the data generator
+            value = 15
+            
             self.add_data_display(value)
             self.add_data_control(value)
             time.sleep(self.interval)

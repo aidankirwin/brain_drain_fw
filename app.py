@@ -12,7 +12,7 @@ class App:
         self.target_icp = 15
 
         # Attach data buffer to app so it can be passed to screens that need it (thread_3)
-        self.data_buffer = DataBuffer(self.sensor_read)
+        self.data_buffer = DataBuffer()
         self.data_buffer.start()
 
         # Start motor control thread (thread_4)
