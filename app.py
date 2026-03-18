@@ -1,13 +1,27 @@
 import tkinter as tk
 from screens.volumewaveform import VolumeWaveform
 from screens.icpwaveform import ICPWaveform
-from dataBuffer import DataBuffer
+from dataCollect import DataBuffer
+from motorcontrol import MotorControl
+from motor import Motor
 
 class App:
     def __init__(self, root):
-        # Attach the data buffer to the app so it can be passed to screens that need it (e.g., ICPWaveform)
-        self.data_buffer = DataBuffer()
-        self.data_buffer.start()  # Start the data buffer to collect sensor data
+
+        # Initial target ICP value
+        self.target_icp = 15
+
+        # Attach data buffer to app so it can be passed to screens that need it (thread_3)
+        self.data_buffer = DataBuffer(self.sensor_read)
+        self.data_buffer.start()
+
+        # Start motor control thread (thread_4)
+        self.motor_control = MotorControl(self.data_buffer, self.target_icp)
+        self.motor_control.start()
+
+        # Start motor thread (thread_5)
+        # motor = Motor(self.motor_control)
+        # motor.start()
 
         # creating the main window
         self.root = root
@@ -35,8 +49,12 @@ class App:
                 frame = ScreenClass(self.container, self)
             self.frames[ScreenClass.__name__] = frame
             frame.place(x=0, y=0, relwidth=1, relheight=1)
-        
+
         self.show("ICPWaveform")
+
+    def update_target_icp(self, new_value):
+        """Update the target ICP value in MotorControl from GUI."""
+        self.motor_control.update_target_icp(new_value)
 
     def show(self, screen_name):
         self.frames[screen_name].tkraise()

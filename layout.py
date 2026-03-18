@@ -1,5 +1,5 @@
 import tkinter as tk
-from PIL import Image, ImageTk
+# from PIL import Image, ImageTk
 from tkinter.font import Font
 
 # Top Panel (status info)
@@ -20,13 +20,13 @@ class LayoutDesigns(tk.Frame):
         connection_frame.pack(anchor="w", padx=(20,0), pady=(10, 0))
         
         # import the icon
-        connection_image = Image.open("Icons/loading-arrows.png")
-        connection_image = connection_image.resize((35, 35), Image.LANCZOS) # resize here if necessary
-        conn_image = ImageTk.PhotoImage(connection_image)
+        # connection_image = Image.open("Icons/loading-arrows.png")
+        # connection_image = connection_image.resize((35, 35), Image.LANCZOS) # resize here if necessary
+        # conn_image = ImageTk.PhotoImage(connection_image)
 
-        connection_label = tk.Label(connection_frame, image=conn_image, bg="white")
-        connection_label.image = conn_image
-        connection_label.pack(side="left")
+        # connection_label = tk.Label(connection_frame, image=conn_image, bg="white")
+        # connection_label.image = conn_image
+        # connection_label.pack(side="left")
 
         # sensor connection status label
         tk.Label(
@@ -40,13 +40,13 @@ class LayoutDesigns(tk.Frame):
         battery_frame = tk.Frame(status_frame, bg="white")
         battery_frame.pack(anchor="w", padx=20, pady=(10, 0))
 
-        battery_image = Image.open("Icons/battery-level-icon.png")
-        battery_image = battery_image.resize((35, 35), Image.LANCZOS)
-        tk_image = ImageTk.PhotoImage(battery_image)
+        # battery_image = Image.open("Icons/battery-level-icon.png")
+        # battery_image = battery_image.resize((35, 35), Image.LANCZOS)
+        # tk_image = ImageTk.PhotoImage(battery_image)
 
-        battery_label = tk.Label(battery_frame, image=tk_image, bg="white")
-        battery_label.image = tk_image
-        battery_label.pack(side="left", padx=(0, 1))
+        # battery_label = tk.Label(battery_frame, image=tk_image, bg="white")
+        # battery_label.image = tk_image
+        # battery_label.pack(side="left", padx=(0, 1))
 
         tk.Label(
             battery_frame,
@@ -57,12 +57,12 @@ class LayoutDesigns(tk.Frame):
         ).pack(side="left")
         
         # create a horizontal divider
-        divider_line1 = tk.Frame(self, height=40, bg="white")
+        divider_line1 = tk.Frame(self, height=20, bg="white")
         divider_line1.pack(fill="x")
         divider_line1.pack_propagate(False) # stop the divider from resizing
         tk.Frame(divider_line1, height=1, bg="black").pack(fill="x", pady=(15, 0)) # draw the time
 
-        divider_line2 = tk.Frame(self, height=40, bg="white")
+        divider_line2 = tk.Frame(self, height=20, bg="white")
         divider_line2.pack(fill="x")
         divider_line2.pack_propagate(False)
 
@@ -73,7 +73,7 @@ class LayoutDesigns(tk.Frame):
         monitor_label.place(relx=0.5, rely=0.5, anchor="center")
 
     def colour_header(self, title="Drain", card_bg="purple"):   
-        status_frame = tk.Frame(self, height=80, bg="white")
+        status_frame = tk.Frame(self, height=60, bg="white")
         status_frame.pack(fill="x")
         status_frame.pack_propagate(False)
 
@@ -91,7 +91,7 @@ class LayoutDesigns(tk.Frame):
     )
         # place it at the far right (relx=0.95) and middle vertically (rely=0.5)
         self.irrigate_btn.place(relx=0.95, rely=0.6, anchor="e")
-        self.irrigate_btn.bind("<Button-1>", lambda e: controller.show("HomeScreen"))
+        self.irrigate_btn.bind("<Button-1>", lambda e: self.controller.show("HomeScreen"))
         
         # create a horizontal divider
         divider_line1 = tk.Frame(self, height=40, bg="white")

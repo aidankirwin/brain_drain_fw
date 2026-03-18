@@ -1,7 +1,5 @@
 import tkinter as tk
 from layout import LayoutDesigns
-from tkinter.font import Font
-from dataBuffer import DataBuffer
 
 class ICPWaveform(LayoutDesigns):
 
@@ -9,6 +7,10 @@ class ICPWaveform(LayoutDesigns):
         super().__init__(parent, controller)
         self.controller = controller
         self.data_buffer = data_buffer
+
+        # Save old ICP values for redrawing logic
+        self.old_icp_min = None
+        self.old_icp_max = None
 
         # State tracking
         self.active_widget = None
@@ -19,31 +21,47 @@ class ICPWaveform(LayoutDesigns):
         self.create_numpad()
 
     # Make waveform scale with ICP values (5-25 mmHg mapped to canvas height)
-    def draw_y_axis_scale(self, icp_min, icp_max):
-        self.waveform.delete("y_axis")  # remove old scale
+    def draw_y_axis_scale(self, scaled_min, scaled_max):
 
-        # Define scale values (you can adjust this)
-        scale_values = [icp_min - 5, icp_min, (icp_min + icp_max) / 2, icp_max, icp_max + 5]
+        if self.old_icp_max is None or scaled_max > self.old_icp_max + 2 or scaled_min < self.old_icp_min - 2:
+            self.waveform.delete("y_axis")  # remove old scale
 
-        for val in scale_values:
-            # Convert ICP value to Y coordinate
-            y = self.waveform_height - int((val - 5) / 20 * (self.waveform_height - 1))
+            # Define scale values across the visible range
+            icp_range = scaled_max - scaled_min
+            scale_values = [
+                scaled_min,
+                scaled_min + icp_range * 0.25,
+                scaled_min + icp_range * 0.5,
+                scaled_min + icp_range * 0.75,
+                scaled_max
+            ]
 
-            # Draw tick mark
-            self.waveform.create_line(0, y, 10, y, fill="black", tags="y_axis")
+            for val in scale_values:
+                # Convert ICP value to Y coordinate using the same formula as the waveform
+                normalized = (val - scaled_min) / (scaled_max - scaled_min)
+                y = self.waveform_height - int(normalized * (self.waveform_height - 1))
 
-            # Draw label
-            self.waveform.create_text(
-                20, y,
-                text=str(val),
-                anchor="w",
-                font=("Helvetica", 12),
-                fill="black",
-                tags="y_axis"
-            )
+                # Draw tick mark
+                self.waveform.create_line(0, y, 10, y, fill="black", tags="y_axis")
 
-        # Draw the main vertical axis line
-        self.waveform.create_line(0, 0, 0, self.waveform_height, fill="black", width=2, tags="y_axis")
+                # Draw label
+                self.waveform.create_text(
+                    20, y,
+                    text=f"{val:.1f}",
+                    anchor="w",
+                    font=("Helvetica", 12),
+                    fill="black",
+                    tags="y_axis"
+                )
+
+            # Draw the main vertical axis line
+            self.waveform.create_line(0, 0, 0, self.waveform_height, fill="black", width=2, tags="y_axis")
+        
+        else:
+            return  # No need to redraw if ICP range hasn't changed
+        
+        self.old_icp_min = scaled_min
+        self.old_icp_max = scaled_max
 
     def toggle_drainage(self, event=None):
         if self.is_draining:
@@ -71,6 +89,8 @@ class ICPWaveform(LayoutDesigns):
             elif label == 'Clear':
                 self.hidden_entry.delete(0, tk.END)
             elif label == 'Done':
+                if self.target_icp_value is not None:
+                    self.controller.update_target_icp(self.target_icp_value)
                 self.numpad_frame.place_forget()
                 return
             else:
@@ -108,7 +128,15 @@ class ICPWaveform(LayoutDesigns):
         return "break"
 
     def update_display_text(self):
+        # Get the current value from the hidden entry
         val = self.hidden_entry.get()
+
+        # Grab ICP value
+        try:
+            self.target_icp_value = int(val) if val else None
+        except ValueError:
+            self.target_icp_value = None
+
         widget = self.active_widget
         widget.configure(state="normal")
         
@@ -122,7 +150,6 @@ class ICPWaveform(LayoutDesigns):
             widget.insert(start, val, ("big_font", "val"))
         else:
             # Tag is GONE (deleted all numbers): 
-            # We need to find the " mmHg" text to know where to put the number
             content = widget.get("1.0", tk.END)
             if "mmHg" in content:
                 # Find the index of "mmHg"
@@ -212,14 +239,14 @@ class ICPWaveform(LayoutDesigns):
         self.waveform = tk.Canvas(
             grid_container_2,
             bg="white",
-            height=500  # or another suitable value
+            height=200
         )
         self.waveform.pack(fill="both", expand=True, padx=1, pady=1)
 
         # For waveform drawing
         self.waveform_width = 800
-        self.waveform_height = 300
-        self.waveform_buffer = [150] * self.waveform_width  # Start with midline
+        self.waveform_height = 200
+        self.waveform_buffer = [20] * self.waveform_width  # Start with midline
 
         # --- BOTTOM BUTTONS ---
         self.set_btn = tk.Label(self, text="Stop Drainage", font=("Helvetica", 20), bg="black", 
@@ -251,28 +278,27 @@ class ICPWaveform(LayoutDesigns):
     def update_waveform(self):
         
         # Try to get a batch of N new points
-        batch = self.data_buffer.fetch_buffer()
-
+        display_batch = self.data_buffer.fetch_display_buffer()
+        
         # If not enough new data yet, skip drawing
-        if batch is None:
+        if display_batch is None:
             self.waveform.after(30, self.update_waveform)
             return
         
-        icp_min = min(batch)
-        icp_max = max(batch) + 1  # +1 to avoid division by zero if all values are the same
-
-        # Redraw scale in case ICP range has changed
-        self.draw_y_axis_scale(icp_min, icp_max)
-
-        # Add padding (e.g., 10% above and below)
-        padding = (icp_max - icp_min) * 0.1
-        scaled_min = icp_min - padding
-        scaled_max = icp_max + padding
-
         # Append new points into the sliding waveform window
-        for icp_val in batch:
+        for icp_val in display_batch:
             self.waveform_buffer.pop(0)
             self.waveform_buffer.append(icp_val)
+
+        # Compute min/max from the full buffer so scaling is stable
+        icp_min = min(self.waveform_buffer)
+        icp_max = max(self.waveform_buffer) + 1  # +1 to avoid division by zero if all values are the same
+
+        scaled_min = icp_min
+        scaled_max = icp_max
+
+        # Redraw scale in case ICP range has changed
+        self.draw_y_axis_scale(scaled_min, scaled_max)
 
         # Convert waveform_buffer → canvas coordinates
         points = []
@@ -283,8 +309,17 @@ class ICPWaveform(LayoutDesigns):
 
         # Redraw
         self.waveform.delete('wave')
+        self.waveform.delete('target_line')
         if len(points) >= 4:
             self.waveform.create_line(points, fill='#38B380', width=2, tags='wave')
+
+        # Draw target ICP horizontal line
+        target = self.controller.target_icp
+        if scaled_min < target < scaled_max:
+            normalized_target = (target - scaled_min) / (scaled_max - scaled_min)
+            y_target = self.waveform_height - int(normalized_target * (self.waveform_height - 1))
+            self.waveform.create_line(0, y_target, self.waveform_width, y_target,
+                                      fill='red', width=1, dash=(4, 4), tags='target_line')
 
         # Schedule next frame
         self.waveform.after(30, self.update_waveform)
