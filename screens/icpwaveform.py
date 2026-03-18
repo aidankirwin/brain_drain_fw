@@ -29,7 +29,7 @@ class ICPWaveform(LayoutDesigns):
     def draw_y_axis_scale(self, scaled_min, scaled_max):
 
         if self.old_icp_max is None or scaled_max > self.old_icp_max + 2 or scaled_min < self.old_icp_min - 2:
-            self.waveform.delete("y_axis")  # remove old scale
+            self.y_axis_canvas.delete("y_axis")  # remove old scale
 
             # Define scale values across the visible range
             icp_range = scaled_max - scaled_min
@@ -41,6 +41,7 @@ class ICPWaveform(LayoutDesigns):
                 scaled_max
             ]
 
+            label_margin = 8  # pixels to clamp labels away from canvas edges
             for val in scale_values:
                 # Convert ICP value to Y coordinate using the same formula as the waveform
                 normalized = (val - scaled_min) / (scaled_max - scaled_min)
@@ -59,8 +60,20 @@ class ICPWaveform(LayoutDesigns):
                     tags="y_axis"
                 )
 
-            # Draw the main vertical axis line
-            self.waveform.create_line(0, 0, 0, self.waveform_height, fill="black", width=2, tags="y_axis")
+                # Clamp label y so text is not cut off at top or bottom
+                y_label = max(label_margin, min(self.waveform_height - label_margin, y))
+                # Draw label right-aligned, with a small tick pointing toward the waveform
+                self.y_axis_canvas.create_text(
+                    54, y_label, # Tick mark number x position
+                    text=f"{val:.1f}",
+                    anchor="e",
+                    font=("Helvetica", 12),
+                    fill="black",
+                    tags="y_axis"
+                )
+
+            # Draw the vertical line on the left edge of the canvas
+            self.y_axis_canvas.create_line(64, 0, 64, self.waveform_height, fill="black", width=2, tags="y_axis")
         
         else:
             return  # No need to redraw if ICP range hasn't changed
@@ -248,6 +261,14 @@ class ICPWaveform(LayoutDesigns):
         grid_container_2 = tk.Frame(outer_frame, bg="black")
         grid_container_2.pack(pady=(20, 10), padx=40, fill="x")
 
+        self.y_axis_canvas = tk.Canvas(
+            grid_container_2,
+            bg="white",
+            width=65,
+            height=200
+        )
+        self.y_axis_canvas.pack(side="left", fill="y", padx=(1, 0), pady=1)
+        
         self.waveform = tk.Canvas(
             grid_container_2,
             bg="white",
