@@ -45,11 +45,11 @@ class ICPWaveform(LayoutDesigns):
                 y = self.waveform_height - int(normalized * (self.waveform_height - 1))
 
                 # Draw tick mark at the right edge (flush against the waveform canvas)
-                self.y_axis_canvas.create_line(60, y, 90, y, fill="black", tags="y_axis")
+                self.y_axis_canvas.create_line(80, y, 90, y, fill="black", tags="y_axis")
 
                 # Draw label to the left of the tick mark
                 self.y_axis_canvas.create_text(
-                    46, y,
+                    76, y,
                     text=f"{val:.1f}",
                     anchor="e",
                     font=("Helvetica", 12),
@@ -58,7 +58,7 @@ class ICPWaveform(LayoutDesigns):
                 )
 
             # Draw the vertical axis line along the right edge of the y_axis canvas
-            self.y_axis_canvas.create_line(60, 0, 90, self.waveform_height, fill="black", width=2, tags="y_axis")
+            self.y_axis_canvas.create_line(90, 0, 90, self.waveform_height, fill="black", width=2, tags="y_axis")
         
         else:
             return  # No need to redraw if ICP range hasn't changed
