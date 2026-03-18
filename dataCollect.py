@@ -26,7 +26,7 @@ class DataBuffer(threading.Thread):
         self.voltage_to_icp_factor = 10
 
         self.lock = threading.Lock()
-        self.interval = 0.1  # 10 Hz update rate timer
+        self.interval = 0.0033
 
     # Sample at 10 Hz
     def run(self):
