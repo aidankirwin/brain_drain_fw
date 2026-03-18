@@ -10,7 +10,9 @@ from adafruit_ads1x15.analog_in import AnalogIn
 
 class DataBuffer(threading.Timer):
     def __init__(self):
-        super().__init__(daemon=True, interval=0.0001)   # daemon=True for simulation
+        super().__init__(interval=0.0001)   # daemon=True for simulation
+        self.daemon = True
+        
         # Start sampling/buffering data immediately upon initialization
         self.running = True
         self.max_length = 20
