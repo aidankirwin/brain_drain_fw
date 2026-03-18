@@ -10,13 +10,15 @@ class App:
 
         # Initial target ICP value
         self.target_icp = 15
+        # Initial drainage state — True to match GUI button showing "Stop Drainage" on load
+        self.is_draining = True
 
         # Attach data buffer to app so it can be passed to screens that need it (thread_3)
         self.data_buffer = DataBuffer()
         self.data_buffer.start()
 
         # Start motor control thread (thread_4)
-        self.motor_control = MotorControl(self.data_buffer, self.target_icp)
+        self.motor_control = MotorControl(self.data_buffer, self.target_icp, self.is_draining)
         self.motor_control.start()
 
         # Start motor thread (thread_5)
@@ -54,8 +56,13 @@ class App:
 
     def update_target_icp(self, new_value):
         """Update the target ICP value in MotorControl from GUI."""
-        self.target_icp = new_value
+        # self.target_icp = new_value
         self.motor_control.update_target_icp(new_value)
+
+    def fetch_drainage_state(self, is_draining):
+        """Update the drainage state in MotorControl from GUI."""
+        # self.is_draining = is_draining
+        self.motor_control.fetch_drainage_state(is_draining)
 
     def show(self, screen_name):
         self.frames[screen_name].tkraise()

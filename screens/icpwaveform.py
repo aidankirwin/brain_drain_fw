@@ -58,7 +58,7 @@ class ICPWaveform(LayoutDesigns):
                 )
 
             # Draw the vertical axis line along the right edge of the y_axis canvas
-            self.y_axis_canvas.create_line(90, 0, 90, self.waveform_height, fill="black", width=2, tags="y_axis")
+            self.y_axis_canvas.create_line(90, -10, 90, self.waveform_height, fill="black", width=2, tags="y_axis")
         
         else:
             return  # No need to redraw if ICP range hasn't changed
@@ -70,9 +70,11 @@ class ICPWaveform(LayoutDesigns):
         if self.is_draining:
             self.set_btn.config(text="Start Drainage", bg="#d7f0e6", fg="#38B380")
             self.is_draining = False
+            self.controller.fetch_drainage_state(self.is_draining)
         else:
             self.set_btn.config(text="Stop Drainage", bg="black", fg="white")
             self.is_draining = True
+            self.controller.fetch_drainage_state(self.is_draining)
 
     def create_numpad(self):
         # The Frame
@@ -273,11 +275,13 @@ class ICPWaveform(LayoutDesigns):
         self.set_btn.place(relx=0.82, rely=0.92, anchor="center")
         self.set_btn.bind("<Button-1>", self.toggle_drainage)
 
-        # mode_btn = tk.Label(self, text="Switch Mode", font=("Helvetica", 20), bg="#F3EAF9", 
-        #                     fg="#8e44ad", width=15, height=2, highlightthickness=1, highlightbackground="#8e44ad")
-        # mode_btn.place(relx=0.2, rely=0.92, anchor="center")
-        # mode_btn.bind("<Button-1>", lambda e: self.controller.show("VolumeWaveform"))
-
+        '''
+        mode_btn = tk.Label(self, text="Switch Mode", font=("Helvetica", 20), bg="#F3EAF9", 
+                            fg="#8e44ad", width=15, height=2, highlightthickness=1, highlightbackground="#8e44ad")
+        mode_btn.place(relx=0.2, rely=0.92, anchor="center")
+        mode_btn.bind("<Button-1>", lambda e: self.controller.show("VolumeWaveform"))
+        '''
+        
         # Bind to the main screen background
         self.bind("<Button-1>", self.dismiss_numpad)
 
