@@ -1,5 +1,4 @@
 import tkinter as tk
-import numpy
 
 from layout import LayoutDesigns
 
@@ -297,7 +296,7 @@ class ICPWaveform(LayoutDesigns):
         self.current_icp.delete("1.0", tk.END)
         self.current_icp.insert(tk.END, "\n", "small_font")
         self.current_icp.insert(tk.END, "Current ICP:\n", "normal_font")
-        self.current_icp.insert(tk.END, str(np.mean(display_batch)), "big_font")
+        self.current_icp.insert(tk.END, str(sum(display_batch) / len(display_batch)), "big_font")
         self.current_icp.insert(tk.END, "mmHg\n", "small_font")
         
         # If not enough new data yet, skip drawing
