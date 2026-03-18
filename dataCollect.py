@@ -6,7 +6,7 @@ class DataBuffer(threading.Thread):
         super().__init__(daemon=True)   # daemon=True for simulation
         # Start sampling/buffering data immediately upon initialization
         self.running = True
-        self.max_length = 400
+        self.max_length = 20
         self.display_icp_buffer = []
         self.control_icp_buffer = []
         self.display_load1_buffer = []
