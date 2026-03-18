@@ -23,7 +23,7 @@ class DataBuffer(threading.Thread):
 
         self.i2c = busio.I2C(board.SCL, board.SDA)
         self.ads = ADS.ADS1115(self.i2c)
-        self.chan = AnalogIn(self.ads, ADS.P0)
+        self.chan = AnalogIn(self.ads, ADS.ADS1115)
         self.voltage_to_icp_factor = 10
 
         self.lock = threading.Lock()
