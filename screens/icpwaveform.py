@@ -41,17 +41,20 @@ class ICPWaveform(LayoutDesigns):
                 scaled_max
             ]
 
+            label_margin = 8  # pixels to clamp labels away from canvas edges
             for val in scale_values:
                 # Convert ICP value to Y coordinate using the same formula as the waveform
                 normalized = (val - scaled_min) / (scaled_max - scaled_min)
                 y = self.waveform_height - int(normalized * (self.waveform_height - 1))
+                # Clamp label y so text is not cut off at top or bottom
+                y_label = max(label_margin, min(self.waveform_height - label_margin, y))
 
                 # Draw tick mark
                 self.waveform.create_line(0, y, 10, y, fill="black", tags="y_axis")
 
                 # Draw label
                 self.waveform.create_text(
-                    20, y,
+                    20, y_label,
                     text=f"{val:.1f}",
                     anchor="w",
                     font=("Helvetica", 12),
@@ -61,13 +64,13 @@ class ICPWaveform(LayoutDesigns):
 
             # Draw the main vertical axis line
             self.waveform.create_line(0, 0, 0, self.waveform_height, fill="black", width=2, tags="y_axis")
-        
+
         else:
             return  # No need to redraw if ICP range hasn't changed
-        
+
         self.old_icp_min = scaled_min
         self.old_icp_max = scaled_max
-
+        
     def toggle_drainage(self, event=None):
         if self.is_draining:
             self.set_btn.config(text="Start Drainage", bg="#d7f0e6", fg="#38B380")
@@ -246,7 +249,7 @@ class ICPWaveform(LayoutDesigns):
 
         # --- WAVEFORM ---
         grid_container_2 = tk.Frame(outer_frame, bg="black")
-        grid_container_2.pack(pady=(20, 10), padx=40, fill="x")
+        grid_container_2.pack(pady=(10, 10), padx=40, fill="x")
 
         self.waveform = tk.Canvas(
             grid_container_2,
