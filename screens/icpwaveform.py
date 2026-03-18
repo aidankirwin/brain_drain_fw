@@ -292,17 +292,17 @@ class ICPWaveform(LayoutDesigns):
         # Try to get a batch of N new points
         display_batch = self.data_buffer.fetch_display_buffer()
         
+        # If not enough new data yet, skip drawing
+        if display_batch is None:
+            self.waveform.after(30, self.update_waveform)
+            return
+        
         # update the "current ICP" text
         self.current_icp.delete("1.0", tk.END)
         self.current_icp.insert(tk.END, "\n", "small_font")
         self.current_icp.insert(tk.END, "Current ICP:\n", "normal_font")
         self.current_icp.insert(tk.END, str(sum(display_batch) / len(display_batch)), "big_font")
         self.current_icp.insert(tk.END, "mmHg\n", "small_font")
-        
-        # If not enough new data yet, skip drawing
-        if display_batch is None:
-            self.waveform.after(30, self.update_waveform)
-            return
         
         # Append new points into the sliding waveform window
         for icp_val in display_batch:
