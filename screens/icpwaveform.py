@@ -178,7 +178,7 @@ class ICPWaveform(LayoutDesigns):
         grid_container.pack(pady=(40, 10), padx=20, fill="x")
 
         # --- CURRENT ICP ---
-        self.current_icp = tk.Text(grid_container, bg="white", fg="#4FA542", height=2, width=15, 
+        self.current_icp = tk.Text(grid_container, bg="white", fg="#4FA542", height=6, width=15, 
                                    borderwidth=0, padx=10, pady=10, highlightthickness=0)
         self.current_icp.grid(row=0, column=0, rowspan=2, sticky="nsew", padx=(1,1), pady=(1,1))
         
@@ -193,7 +193,7 @@ class ICPWaveform(LayoutDesigns):
         self.current_icp.insert(tk.END, "mmHg\n", "small_font")
 
         # --- TARGET ICP ---
-        self.target_icp = tk.Text(grid_container, bg="white", fg="black", height=2, width=20, 
+        self.target_icp = tk.Text(grid_container, bg="white", fg="black", height=6, width=20, 
                                   borderwidth=0, padx=10, pady=5, highlightthickness=0)
         self.target_icp.grid(row=0, column=1, rowspan=2, sticky="nsew", padx=(0,1), pady=(1,0))
         
@@ -218,7 +218,7 @@ class ICPWaveform(LayoutDesigns):
         for i in range(3): grid_container.rowconfigure(i, weight=1)
 
         # --- VOLUME BOXES (Static) ---
-        vdbag = tk.Text(grid_container, bg="white", fg="black", height=2, borderwidth=0, highlightthickness=0, padx=10, pady=5)
+        vdbag = tk.Text(grid_container, bg="white", fg="black", height=6, borderwidth=0, highlightthickness=0, padx=10, pady=5)
         vdbag.grid(row=2, column=0, sticky="nsew", padx=(1,0), pady=(0,1))
         vdbag.tag_configure('normal_font', font=('Helvetica', 20), justify='right')
         vdbag.insert(tk.END, "\nVolume in \nDrainage Bag:\n", "normal_font")
