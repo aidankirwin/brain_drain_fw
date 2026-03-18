@@ -70,7 +70,7 @@ class ICPWaveform(LayoutDesigns):
 
         self.old_icp_min = scaled_min
         self.old_icp_max = scaled_max
-        
+
     def toggle_drainage(self, event=None):
         if self.is_draining:
             self.set_btn.config(text="Start Drainage", bg="#d7f0e6", fg="#38B380")
@@ -256,7 +256,7 @@ class ICPWaveform(LayoutDesigns):
             bg="white",
             height=350
         )
-        self.waveform.pack(fill="both", expand=True, padx=1, pady=1)
+        self.waveform.pack(fill="both", expand=False, padx=1, pady=1)
 
         # For waveform drawing
         self.waveform_width = 800
