@@ -164,6 +164,9 @@ class ICPWaveform(LayoutDesigns):
             else:
                 # Absolute fallback: just put it at the end
                 widget.insert(tk.END, val, ("big_font", "val"))
+
+        # update stored target
+        self.controller.target_icp = self.target_icp_value
         
         widget.configure(state="disabled")
     
