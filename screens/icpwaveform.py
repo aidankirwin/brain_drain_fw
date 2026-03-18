@@ -236,7 +236,7 @@ class ICPWaveform(LayoutDesigns):
         vdbagnum.grid(row=2, column=1, sticky="nsew", padx=(0,1), pady=(1,1))
         vdbagnum.tag_configure('big_font', font=('Helvetica', 70), justify='left')
         vdbagnum.tag_configure('normal_font', font=('Helvetica', 20), justify='left')
-        vdbagnum.insert(tk.END, "\n150", "big_font")
+        vdbagnum.insert(tk.END, "150", "big_font")
         vdbagnum.insert(tk.END, "ml", "normal_font")
         vdbagnum.configure(state="disabled")
 
