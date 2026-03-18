@@ -1,6 +1,7 @@
 import threading
 import time
 import copy
+import math
 
 class DataBuffer(threading.Thread):
     def __init__(self):
@@ -22,7 +23,7 @@ class DataBuffer(threading.Thread):
     def run(self):
         while self.running:
             # read from ads1115
-            value = 130
+            value = 20 + math.randint(-200, 200)
 
             self.add_data_display(value)
             self.add_data_control(value)

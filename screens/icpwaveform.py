@@ -1,4 +1,5 @@
 import tkinter as tk
+import numpy
 
 from layout import LayoutDesigns
 
@@ -194,7 +195,6 @@ class ICPWaveform(LayoutDesigns):
         self.current_icp.tag_configure('normal_font', font=('Helvetica', 20), justify='center')
         self.current_icp.tag_configure('small_font', font=('Helvetica', 16), justify='right')
         
-
         self.current_icp.insert(tk.END, "\n", "small_font")
         self.current_icp.insert(tk.END, "Current ICP:\n", "normal_font")
         self.current_icp.insert(tk.END, "10", "big_font")
@@ -292,7 +292,13 @@ class ICPWaveform(LayoutDesigns):
         
         # Try to get a batch of N new points
         display_batch = self.data_buffer.fetch_display_buffer()
-        print(display_batch)
+        
+        # update the "current ICP" text
+        self.current_icp.delete("1.0", tk.END)
+        self.current_icp.insert(tk.END, "\n", "small_font")
+        self.current_icp.insert(tk.END, "Current ICP:\n", "normal_font")
+        self.current_icp.insert(tk.END, str(np.mean(display_batch)), "big_font")
+        self.current_icp.insert(tk.END, "mmHg\n", "small_font")
         
         # If not enough new data yet, skip drawing
         if display_batch is None:
