@@ -160,7 +160,7 @@ class ICPWaveform(LayoutDesigns):
                 # Find the index of "mmHg"
                 idx = widget.search("mmHg", "1.0")
                 # Insert the new number and RE-APPLY the "val" tag
-                widget.insert(idx, val, ("big_font", "icp_target_val"))
+                widget.insert(idx, val, ("big_font", "val"))
             else:
                 # Absolute fallback: just put it at the end
                 widget.insert(tk.END, val, ("big_font", "val"))
