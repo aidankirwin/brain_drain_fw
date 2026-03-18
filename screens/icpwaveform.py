@@ -45,7 +45,7 @@ class ICPWaveform(LayoutDesigns):
                 y = self.waveform_height - int(normalized * (self.waveform_height - 1))
 
                 # Draw tick mark at the right edge (flush against the waveform canvas)
-                self.y_axis_canvas.create_line(50, y, 80, y, fill="black", tags="y_axis")
+                self.y_axis_canvas.create_line(50, y, 90, y, fill="black", tags="y_axis")
 
                 # Draw label to the left of the tick mark
                 self.y_axis_canvas.create_text(
@@ -250,7 +250,7 @@ class ICPWaveform(LayoutDesigns):
         self.y_axis_canvas = tk.Canvas(
             grid_container_2,
             bg="white",
-            width=60,
+            width=90,
             height=350
         )
         self.y_axis_canvas.pack(side="left", padx=(1, 0), pady=1)
