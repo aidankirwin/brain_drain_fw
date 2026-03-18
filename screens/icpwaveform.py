@@ -1,9 +1,13 @@
 import tkinter as tk
+
 from layout import LayoutDesigns
+
+from dataCollect import DataBuffer
+from app import App
 
 class ICPWaveform(LayoutDesigns):
 
-    def __init__(self, parent, controller, data_buffer=None):
+    def __init__(self, parent, controller : App, data_buffer : DataBuffer):
         super().__init__(parent, controller)
         self.controller = controller
         self.data_buffer = data_buffer
@@ -155,12 +159,15 @@ class ICPWaveform(LayoutDesigns):
                 # Find the index of "mmHg"
                 idx = widget.search("mmHg", "1.0")
                 # Insert the new number and RE-APPLY the "val" tag
-                widget.insert(idx, val, ("big_font", "val"))
+                widget.insert(idx, val, ("big_font", "icp_target_val"))
             else:
                 # Absolute fallback: just put it at the end
                 widget.insert(tk.END, val, ("big_font", "val"))
         
         widget.configure(state="disabled")
+    
+    def update_current_volume(self):
+        self.waveform.after(30, self.update_waveform)
 
     def dismiss_numpad(self, event=None):
     # Only hide if the click wasn't inside the numpad itself
@@ -178,7 +185,7 @@ class ICPWaveform(LayoutDesigns):
         grid_container.pack(pady=(40, 10), padx=20, fill="x")
 
         # --- CURRENT ICP ---
-        self.current_icp = tk.Text(grid_container, bg="white", fg="#4FA542", height=10, width=15, 
+        self.current_icp = tk.Text(grid_container, bg="white", fg="#4FA542", height=8, width=15, 
                                    borderwidth=0, padx=10, pady=10, highlightthickness=0)
         self.current_icp.grid(row=0, column=0, rowspan=2, sticky="nsew", padx=(1,1), pady=(1,1))
         
@@ -191,9 +198,11 @@ class ICPWaveform(LayoutDesigns):
         self.current_icp.insert(tk.END, "Current ICP:\n", "normal_font")
         self.current_icp.insert(tk.END, "10", "big_font")
         self.current_icp.insert(tk.END, "mmHg\n", "small_font")
+        
+        self.current_icp.configure(state='disabled')
 
         # --- TARGET ICP ---
-        self.target_icp = tk.Text(grid_container, bg="white", fg="black", height=10, width=20, 
+        self.target_icp = tk.Text(grid_container, bg="white", fg="black", height=8, width=20, 
                                   borderwidth=0, padx=10, pady=5, highlightthickness=0)
         self.target_icp.grid(row=0, column=1, rowspan=2, sticky="nsew", padx=(0,1), pady=(1,0))
         
@@ -218,7 +227,7 @@ class ICPWaveform(LayoutDesigns):
         for i in range(3): grid_container.rowconfigure(i, weight=1)
 
         # --- VOLUME BOXES (Static) ---
-        vdbag = tk.Text(grid_container, bg="white", fg="black", height=6, borderwidth=0, highlightthickness=0, padx=10, pady=5)
+        vdbag = tk.Text(grid_container, bg="white", fg="black", height=8, borderwidth=0, highlightthickness=0, padx=10, pady=5)
         vdbag.grid(row=2, column=0, sticky="nsew", padx=(1,0), pady=(0,1))
         vdbag.tag_configure('normal_font', font=('Helvetica', 20), justify='right')
         vdbag.insert(tk.END, "\nVolume in \nDrainage Bag:\n", "normal_font")
@@ -228,7 +237,7 @@ class ICPWaveform(LayoutDesigns):
         vdbagnum.grid(row=2, column=1, sticky="nsew", padx=(0,1), pady=(1,1))
         vdbagnum.tag_configure('big_font', font=('Helvetica', 70), justify='left')
         vdbagnum.tag_configure('normal_font', font=('Helvetica', 20), justify='left')
-        vdbagnum.insert(tk.END, "150", "big_font")
+        vdbagnum.insert(tk.END, "\n150", "big_font")
         vdbagnum.insert(tk.END, "ml", "normal_font")
         vdbagnum.configure(state="disabled")
 
@@ -239,7 +248,7 @@ class ICPWaveform(LayoutDesigns):
         self.waveform = tk.Canvas(
             grid_container_2,
             bg="white",
-            height=400
+            height=350
         )
         self.waveform.pack(fill="both", expand=True, padx=1, pady=1)
 
@@ -254,10 +263,10 @@ class ICPWaveform(LayoutDesigns):
         self.set_btn.place(relx=0.82, rely=0.92, anchor="center")
         self.set_btn.bind("<Button-1>", self.toggle_drainage)
 
-        mode_btn = tk.Label(self, text="Switch Mode", font=("Helvetica", 20), bg="#F3EAF9", 
-                            fg="#8e44ad", width=15, height=2, highlightthickness=1, highlightbackground="#8e44ad")
-        mode_btn.place(relx=0.2, rely=0.92, anchor="center")
-        mode_btn.bind("<Button-1>", lambda e: self.controller.show("VolumeWaveform"))
+        # mode_btn = tk.Label(self, text="Switch Mode", font=("Helvetica", 20), bg="#F3EAF9", 
+        #                     fg="#8e44ad", width=15, height=2, highlightthickness=1, highlightbackground="#8e44ad")
+        # mode_btn.place(relx=0.2, rely=0.92, anchor="center")
+        # mode_btn.bind("<Button-1>", lambda e: self.controller.show("VolumeWaveform"))
 
         # Bind to the main screen background
         self.bind("<Button-1>", self.dismiss_numpad)
