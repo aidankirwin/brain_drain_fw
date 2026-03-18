@@ -21,9 +21,12 @@ class MotorControl(threading.Thread):
             time.sleep(self.interval)
     
     def calculate_step_response(self, control_batch):
-        icp_difference = sum(control_batch) / len(control_batch) - self.target_icp
-        delay_time = icp_difference  # Higher ICP -> faster response
-        if icp_difference <=0:
+        icp_difference = 0
+        if len(control_batch) > 0:
+            icp_difference = sum(control_batch) / len(control_batch) - self.target_icp
+            
+            delay_time = icp_difference
+        if icp_difference <= 0:
             delay_time = None
         return delay_time
     
