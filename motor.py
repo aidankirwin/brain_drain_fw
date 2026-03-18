@@ -8,7 +8,7 @@ class Motor(threading.Thread):
         super().__init__(daemon=True)  # Daemon thread to run in background
         self.motor_control = motor_control  # Pass data buffer
         self.running = True
-        self.interval = 0.001  # 1 kHz update rate timer
+        self.interval = 0.001
         self.STEP_PIN = 3
         self.step = OutputDevice(self.STEP_PIN)
 

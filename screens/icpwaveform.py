@@ -246,7 +246,7 @@ class ICPWaveform(LayoutDesigns):
 
         # --- WAVEFORM ---
         grid_container_2 = tk.Frame(outer_frame, bg="black")
-        grid_container_2.pack(pady=(10, 10), padx=40, fill="x")
+        grid_container_2.pack(pady=(20, 10), padx=40, fill="x")
 
         self.waveform = tk.Canvas(
             grid_container_2,
