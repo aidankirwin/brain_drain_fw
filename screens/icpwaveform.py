@@ -178,7 +178,7 @@ class ICPWaveform(LayoutDesigns):
         grid_container.pack(pady=(40, 10), padx=20, fill="x")
 
         # --- CURRENT ICP ---
-        self.current_icp = tk.Text(grid_container, bg="white", fg="#4FA542", height=6, width=15, 
+        self.current_icp = tk.Text(grid_container, bg="white", fg="#4FA542", height=10, width=15, 
                                    borderwidth=0, padx=10, pady=10, highlightthickness=0)
         self.current_icp.grid(row=0, column=0, rowspan=2, sticky="nsew", padx=(1,1), pady=(1,1))
         
@@ -193,7 +193,7 @@ class ICPWaveform(LayoutDesigns):
         self.current_icp.insert(tk.END, "mmHg\n", "small_font")
 
         # --- TARGET ICP ---
-        self.target_icp = tk.Text(grid_container, bg="white", fg="black", height=6, width=20, 
+        self.target_icp = tk.Text(grid_container, bg="white", fg="black", height=10, width=20, 
                                   borderwidth=0, padx=10, pady=5, highlightthickness=0)
         self.target_icp.grid(row=0, column=1, rowspan=2, sticky="nsew", padx=(0,1), pady=(1,0))
         
@@ -239,13 +239,13 @@ class ICPWaveform(LayoutDesigns):
         self.waveform = tk.Canvas(
             grid_container_2,
             bg="white",
-            height=200
+            height=400
         )
         self.waveform.pack(fill="both", expand=True, padx=1, pady=1)
 
         # For waveform drawing
         self.waveform_width = 800
-        self.waveform_height = 200
+        self.waveform_height = 300
         self.waveform_buffer = [20] * self.waveform_width  # Start with midline
 
         # --- BOTTOM BUTTONS ---
