@@ -18,6 +18,8 @@ class ICPWaveform(LayoutDesigns):
         # State tracking
         self.active_widget = None
         self.is_draining = True
+
+        self.target_icp_value = None
         
         self.colour_header(title="ICP-Based Drainage", card_bg="#38B380")
         self.setup_ui()
