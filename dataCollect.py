@@ -8,9 +8,9 @@ import busio
 import adafruit_ads1x15.ads1115 as ADS
 from adafruit_ads1x15.analog_in import AnalogIn
 
-class DataBuffer(threading.Thread):
+class DataBuffer(threading.Timer):
     def __init__(self):
-        super().__init__(daemon=True)   # daemon=True for simulation
+        super().__init__(daemon=True, interval=0.0001)   # daemon=True for simulation
         # Start sampling/buffering data immediately upon initialization
         self.running = True
         self.max_length = 20
@@ -26,18 +26,15 @@ class DataBuffer(threading.Thread):
         self.voltage_to_icp_factor = 10
 
         self.lock = threading.Lock()
-        self.interval = 0.0033
 
     # Sample at 10 Hz
     def run(self):
-        while self.running:
-            # read from ads1115
-            voltage = self.ads.read(0)
-            value = voltage * self.voltage_to_icp_factor
+        # read from ads1115
+        voltage = self.ads.read(0)
+        value = voltage * self.voltage_to_icp_factor
 
-            self.add_data_display(value)
-            self.add_data_control(value)
-            time.sleep(self.interval)
+        self.add_data_display(value)
+        self.add_data_control(value)
 
     # Attach value from sensor read to the buffer
     def add_data_display(self, value):
