@@ -3,6 +3,11 @@ import time
 import copy
 import random
 
+import board
+import busio
+import adafruit_ads1x15.ads1115 as ADS
+from adafruit_ads1x15.analog_in import AnalogIn
+
 class DataBuffer(threading.Thread):
     def __init__(self):
         super().__init__(daemon=True)   # daemon=True for simulation
@@ -16,6 +21,11 @@ class DataBuffer(threading.Thread):
         self.display_load2_buffer = []
         self.control_load2_buffer = []
 
+        self.i2c = busio.I2C(board.SCL, board.SDA)
+        self.ads = ADS.ADS1115(self.i2c)
+        self.chan = AnalogIn(self.ads, ADS.P0)
+        self.voltage_to_icp_factor = 10
+
         self.lock = threading.Lock()
         self.interval = 0.1  # 10 Hz update rate timer
 
@@ -23,7 +33,8 @@ class DataBuffer(threading.Thread):
     def run(self):
         while self.running:
             # read from ads1115
-            value = 20 + random.randint(-200, 200)
+            voltage = self.chan.voltage
+            value = voltage * self.voltage_to_icp_factor
 
             self.add_data_display(value)
             self.add_data_control(value)
