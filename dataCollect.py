@@ -4,6 +4,8 @@ import board
 import busio
 import adafruit_ads1x15.ads1115 as ADS
 
+import copy
+
 class DataBuffer(threading.Thread):
     def __init__(self):
         super().__init__()
@@ -89,5 +91,22 @@ class DataBuffer(threading.Thread):
             if len(buffer) > self.max_length:
                 buffer.pop(0)
 
+    # Return the current buffer contents (for plotting)
+    def fetch_display_buffer(self):
+        with self.lock:
+            if len(self.display_icp_buffer) >= self.max_length:
+                batch = copy.copy(self.display_icp_buffer)
+                self.display_icp_buffer.clear()
+                return list(batch)  # return a copy of the batch for plotting
+            return None  # Not enough data to release yet
+        
+    def fetch_control_buffer(self):
+        with self.lock:
+            if len(self.control_icp_buffer) >= self.max_length:
+                batch = copy.copy(self.control_icp_buffer)
+                self.control_icp_buffer.clear()
+                return list(batch)  # return a copy of the batch for control logic
+            return None  # Not enough data to release yet
+    
     def stop(self):
         self.running = False
