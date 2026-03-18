@@ -1,7 +1,7 @@
 from gpiozero import OutputDevice
 import time
 import threading
-from databuffer import DataBuffer
+from dataCollect import DataBuffer
 
 class Motor(threading.Thread):
     def __init__(self, motor_control):
