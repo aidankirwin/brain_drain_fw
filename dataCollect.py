@@ -93,9 +93,6 @@ class DataBuffer(threading.Thread):
                 next_time = time.perf_counter()
 
     def read_channel(self, ch):
-        # Select channel
-        self.ads.mux = ch
-
         # Small delay to allow conversion to settle
         time.sleep(0.001)  # ~1 ms (tune if needed)
 
