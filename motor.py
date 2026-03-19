@@ -11,7 +11,7 @@ class Motor(threading.Thread):
         self.motor_control = motor_control  # Pass data buffer
         self.running = True
         self.interval = 0.001
-        self.STEP_PIN = 3
+        self.STEP_PIN = 6
 
         GPIO.setup(self.STEP_PIN, GPIO.OUT)
 
