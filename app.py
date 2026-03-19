@@ -25,11 +25,11 @@ class App:
         self.motor_control = MotorControl(self.data_buffer, self.target_icp, self.is_draining)
         self.motor_control.start()
 
-        # print('starting stepper thread')
+        print('starting stepper thread')
 
-        # # Start motor thread (thread_5)
-        # motor = Motor(self.motor_control)
-        # motor.start()
+        # Start motor thread (thread_5)
+        motor = Motor(self.motor_control)
+        motor.start()
 
         print('creating main window')
         # creating the main window
