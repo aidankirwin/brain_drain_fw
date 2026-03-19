@@ -15,13 +15,13 @@ class App:
 
         print('starting sensor reads')
 
-        # # Attach data buffer to app so it can be passed to screens that need it (thread_3)
-        # self.data_buffer = DataBuffer()
-        # self.data_buffer.start()
+        # Attach data buffer to app so it can be passed to screens that need it (thread_3)
+        self.data_buffer = DataBuffer()
+        self.data_buffer.start()
 
-        # print('starting motor control')
+        print('starting motor control')
 
-        # # Start motor control thread (thread_4)
+        # Start motor control thread (thread_4)
         # self.motor_control = MotorControl(self.data_buffer, self.target_icp, self.is_draining)
         # self.motor_control.start()
 
@@ -53,7 +53,7 @@ class App:
         # iterate through the screens to stack them (i.e, display the pages in the correct order)
         for ScreenClass in screens:
             if ScreenClass == ICPWaveform:
-                frame = ScreenClass(self.container, self, None)
+                frame = ScreenClass(self.container, self, self.data_buffer)
             else:
                 frame = ScreenClass(self.container, self)
             self.frames[ScreenClass.__name__] = frame
