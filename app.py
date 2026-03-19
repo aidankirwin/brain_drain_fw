@@ -13,17 +13,23 @@ class App:
         # Initial drainage state — True to match GUI button showing "Stop Drainage" on load
         self.is_draining = True
 
+        print('starting sensor reads')
+
         # Attach data buffer to app so it can be passed to screens that need it (thread_3)
         self.data_buffer = DataBuffer()
         self.data_buffer.start()
+
+        print('starting motor control')
 
         # Start motor control thread (thread_4)
         self.motor_control = MotorControl(self.data_buffer, self.target_icp, self.is_draining)
         self.motor_control.start()
 
+        print('starting stepper thread')
+
         # Start motor thread (thread_5)
-        # motor = Motor(self.motor_control)
-        # motor.start()
+        motor = Motor(self.motor_control)
+        motor.start()
 
         # creating the main window
         self.root = root
