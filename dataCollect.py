@@ -97,7 +97,7 @@ class DataBuffer(threading.Thread):
         time.sleep(0.001)  # ~1 ms (tune if needed)
 
         # Read voltage
-        voltage = self.ads.read(ch)
+        voltage = np.array([self.ads.read(ch)], dtype=float)
 
         # Calibration curve to convert voltage to ICP value (example: linear scaling)
         '''CALIBRATION CURVE'''
@@ -106,14 +106,12 @@ class DataBuffer(threading.Thread):
 
         voltage = loaded_model['poly'].transform(voltage.reshape(-1, 1))
         voltage = loaded_model['quad_model'].predict(voltage)
-        filt_voltage = loaded_model['poly'].transform(filt_voltage.reshape(-1, 1))
-        filt_voltage = loaded_model['quad_model'].predict(filt_voltage)
 
         # Apply filters
         '''FILTERS'''
 
         # Convert
-        return filt_voltage * self.voltage_to_icp_factor
+        return voltage * self.voltage_to_icp_factor
 
     def add_data(self, buffer, value):
         with self.lock:
