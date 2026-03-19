@@ -7,6 +7,9 @@ from motor import Motor
 
 class App:
     def __init__(self, root):
+        self.root = root
+        self.root.update_idletasks()
+        self.root.title("BrainDrain Hardware Test")
 
         # Initial target ICP value
         self.target_icp = 15
