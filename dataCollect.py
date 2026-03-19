@@ -83,7 +83,7 @@ class DataBuffer(threading.Thread):
             # ---- measurements ----
             loop_period = loop_end - loop_start
 
-            # print(f"Loop period: {loop_period:.6f}s | ")
+            print(f"Loop period: {loop_period:.6f}s | ")
 
             # ---- timing control ----
             next_time += self.period
@@ -97,26 +97,25 @@ class DataBuffer(threading.Thread):
 
     def read_channel(self, ch):
         # Small delay to allow conversion to settle
-        # time.sleep(0.001)  # ~1 ms (tune if needed)
 
         # Read voltage
         voltage = np.array(self.ads.read(ch))
-        # Calibration curve to convert voltage to ICP value (example: linear scaling)
-        '''CALIBRATION CURVE'''
-        if ch == 0:
+
+        # Calibration curves and filtering
+        if ch == 0: # pressure
             voltage = self.loaded_model['poly'].transform(
                 pd.DataFrame(voltage.reshape(-1, 1), columns=self.loaded_model['poly'].feature_names_in_)
             )
             voltage = self.loaded_model['quad_model'].predict(voltage)
-        elif ch == 1 or ch == 3:
+
+
+        elif ch == 1 or ch == 3:    # load cell
             # Calibration
             scale = 0.32830703
             offset = -1634.5324180655623
             voltage = voltage * scale + offset
 
-        # Apply filters
-        '''FILTERS'''
-
+        
         # Convert
         return float(voltage[0]) * self.voltage_to_icp_factor
 
