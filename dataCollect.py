@@ -105,8 +105,8 @@ class DataBuffer(threading.Thread):
         process_var = 1e-6
         meas_var = 38791215.89354596
 
-        self.kf_1 = KalmanVolumeFlow(1/100, process_var, meas_var)
-        self.kf_2 = KalmanVolumeFlow(1/100, process_var, meas_var)
+        # self.kf_1 = KalmanVolumeFlow(1/100, process_var, meas_var)
+        # self.kf_2 = KalmanVolumeFlow(1/100, process_var, meas_var)
 
         # I2C + ADC
         # self.i2c = busio.I2C(board.SCL, board.SDA)
@@ -123,6 +123,7 @@ class DataBuffer(threading.Thread):
         next_time = time.perf_counter()
 
         while self.running:
+            time.sleep(2)
             loop_start = time.perf_counter()
 
             for ch in self.channels:
@@ -160,46 +161,53 @@ class DataBuffer(threading.Thread):
         reading_arr = np.atleast_1d(reading)
 
         if ch == 0:  # pressure
-            reading_df = pd.DataFrame(
-                reading_arr.reshape(-1, 1),
-                columns=self.loaded_model['poly'].feature_names_in_
-            )
-            reading_arr = self.loaded_model['poly'].transform(reading_df)
-            reading_arr = self.loaded_model['quad_model'].predict(reading_arr)
+            # reading_df = pd.DataFrame(
+            #     reading_arr.reshape(-1, 1),
+            #     columns=self.loaded_model['poly'].feature_names_in_
+            # )
+            # reading_arr = self.loaded_model['poly'].transform(reading_df)
+            # reading_arr = self.loaded_model['quad_model'].predict(reading_arr)
 
-            if self.z_pressure is None:
-                self.z_pressure = signal.sosfilt_zi(self.sos_pressure) * reading_arr
+            # if self.z_pressure is None:
+            #     self.z_pressure = signal.sosfilt_zi(self.sos_pressure) * reading_arr
 
-            reading_arr, self.z_pressure = signal.sosfilt(
-                self.sos_pressure, reading_arr, zi=self.z_pressure
-            )
+            # reading_arr, self.z_pressure = signal.sosfilt(
+            #     self.sos_pressure, reading_arr, zi=self.z_pressure
+            # )
             return reading_arr[0]
 
         elif ch == 1:  # load cell 1
             reading_arr = np.atleast_1d(5250)
             reading_arr = reading_arr * self.lc_scale + self.lc_offset
 
-            if self.z_load1 is None:
-                self.z_load1 = signal.sosfilt_zi(self.sos_loadcell) * reading_arr
+            # if self.z_load1 is None:
+            #     self.z_load1 = signal.sosfilt_zi(self.sos_loadcell) * reading_arr
 
-            reading_arr, self.z_load1 = signal.sosfilt(
-                self.sos_loadcell, reading_arr, zi=self.z_load1
-            )
+            # reading_arr, self.z_load1 = signal.sosfilt(
+            #     self.sos_loadcell, reading_arr, zi=self.z_load1
+            # )
 
-            x = self.kf_1.update(reading_arr[0])
+            # x = self.kf_1.update(reading_arr[0])
+            x = []
+            x[0] = reading_arr
+            x[1] = 1
             return x[0], x[1]
 
         elif ch == 2:  # load cell 2
             reading_arr = reading_arr * self.lc_scale + self.lc_offset
 
-            if self.z_load2 is None:
-                self.z_load2 = signal.sosfilt_zi(self.sos_loadcell) * reading_arr
+            # if self.z_load2 is None:
+            #     self.z_load2 = signal.sosfilt_zi(self.sos_loadcell) * reading_arr
 
-            reading_arr, self.z_load2 = signal.sosfilt(
-                self.sos_loadcell, reading_arr, zi=self.z_load2
-            )
+            # reading_arr, self.z_load2 = signal.sosfilt(
+            #     self.sos_loadcell, reading_arr, zi=self.z_load2
+            # )
 
-            x = self.kf_2.update(reading_arr[0])
+            # x = self.kf_2.update(reading_arr[0])
+            # return x[0], x[1]
+            x = []
+            x[0] = reading_arr
+            x[1] = 1
             return x[0], x[1]
 
     def add_data(self, sensor, stream, value):
