@@ -3,8 +3,8 @@ import time
 import board
 import busio
 import adafruit_ads1x15.ads1115 as ADS
-
 import copy
+import numpy as np
 
 class DataBuffer(threading.Thread):
     def __init__(self):
@@ -18,7 +18,7 @@ class DataBuffer(threading.Thread):
         self.period = 0.0033  # ~300 Hz total loop
 
         # Buffers
-        self.max_length = 20
+        self.max_length = 100
         self.display_icp_buffer = []
         self.control_icp_buffer = []
 
