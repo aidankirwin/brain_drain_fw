@@ -164,7 +164,7 @@ class DataBuffer(threading.Thread):
             reading = reading[0]
 
             # filtering
-            
+
         elif ch == 1 or ch == 3:    # load cell
             # Calibration
             scale = 0.32830703
@@ -172,7 +172,7 @@ class DataBuffer(threading.Thread):
             reading = reading * scale + offset
 
         # Convert
-        return reading
+        return np.round(reading,1)
 
     def add_data(self, buffer, value):
         with self.lock:
