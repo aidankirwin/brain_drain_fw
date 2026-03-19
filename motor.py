@@ -10,7 +10,7 @@ class Motor(threading.Thread):
         super().__init__(daemon=True)  # Daemon thread to run in background
         self.motor_control = motor_control  # Pass data buffer
         self.running = True
-        self.interval = 0.001
+        self.interval = 1
         # self.STEP_PIN = 6
 
         # GPIO.setup(self.STEP_PIN, GPIO.OUT)
@@ -22,7 +22,7 @@ class Motor(threading.Thread):
                     time.sleep(self.interval)  # Default delay if no control signal
                 else:
                     print('motor')
-                    # time.sleep(self.interval)
+                    time.sleep(self.interval)
                     # GPIO.output(self.STEP_PIN, GPIO.HIGH)
                     # time.sleep(0.005)
                     # GPIO.output(self.STEP_PIN, GPIO.LOW)

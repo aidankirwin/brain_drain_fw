@@ -7,7 +7,7 @@ from gpiozero import PWMOutputDevice, AngularServo
 class MotorControl(threading.Thread):
     def __init__(self, data_buffer, target_icp, is_draining):
         super().__init__(daemon=True)  # Daemon thread to run in background
-        self.interval = 1  # 1 Hz update rate timer
+        self.interval = 10  # 1 Hz update rate timer
         self.data_buffer = data_buffer
         self.running = True
         self.target_icp = target_icp  # Target ICP value for control logic
@@ -42,7 +42,8 @@ class MotorControl(threading.Thread):
             # relationship between flow rate and step response approximately y = 0.12e^-0.0303x
             # where x = flow rate in mL/hr, and y is step delay in seconds
 
-            delay_time = 0.12 * np.e ** (-0.0303 * icp_difference)
+            # delay_time = 0.12 * np.e ** (-0.0303 * icp_difference)
+            delay_time = 1
 
         if icp_difference <= 0 or not is_draining:
             delay_time = None  # No drainage if ICP is below target or if drainage is turned off

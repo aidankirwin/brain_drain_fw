@@ -51,6 +51,8 @@ class App:
             VolumeWaveform, 
         ]
 
+        print('starting waveform display')
+
         # iterate through the screens to stack them (i.e, display the pages in the correct order)
         for ScreenClass in screens:
             if ScreenClass == ICPWaveform:
