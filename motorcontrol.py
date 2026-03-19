@@ -14,7 +14,7 @@ class MotorControl(threading.Thread):
 
     def run(self):
         while self.running:
-            control_batch = self.data_buffer.fetch_control_buffer()
+            control_batch = self.data_buffer.fetch_buffer('icp', 'control')
             if control_batch is not None:
                 self.delay_time = self.calculate_step_response(control_batch, self.is_draining)
             
