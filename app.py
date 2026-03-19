@@ -37,7 +37,7 @@ class App:
         self.root.geometry("400x500")
         self.root.configure(bg="white")
         self.root.title("NeuroFlow")
-        # self.root.attributes("-fullscreen", True)
+        self.root.attributes("-fullscreen", True)
 
         # container for switching pages
         self.container = tk.Frame(root, bg="white")

@@ -188,7 +188,7 @@ class DataBuffer(threading.Thread):
             # )
 
             # x = self.kf_1.update(reading_arr[0])
-            x = []
+            x = [0,0]
             x[0] = reading_arr
             x[1] = 1
             return x[0], x[1]
@@ -205,7 +205,7 @@ class DataBuffer(threading.Thread):
 
             # x = self.kf_2.update(reading_arr[0])
             # return x[0], x[1]
-            x = []
+            x = [0,0]
             x[0] = reading_arr
             x[1] = 1
             return x[0], x[1]
