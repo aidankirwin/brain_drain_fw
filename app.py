@@ -31,6 +31,7 @@ class App:
         motor = Motor(self.motor_control)
         motor.start()
 
+        print('creating main window')
         # creating the main window
         self.root = root
         self.root.geometry("400x500")
@@ -57,6 +58,8 @@ class App:
                 frame = ScreenClass(self.container, self)
             self.frames[ScreenClass.__name__] = frame
             frame.place(x=0, y=0, relwidth=1, relheight=1)
+
+        print('show icp waveform screen')
 
         self.show("ICPWaveform")
 
