@@ -4,15 +4,17 @@ import signal
 import threading
 import tkinter as tk
 
-from gpiozero import LED
-from gpiozero.pins.lgpio import LGPIOFactory
-
 from gpiozero import OutputDevice
 from time import sleep
 
 import time
 import RPi.GPIO as GPIO
 from gpiozero import PWMOutputDevice, AngularServo
+from gpiozero.pins.pigpio import PiGPIOFactory
+
+from gpiozero import Device
+
+Device.pin_factory = PiGPIOFactory()
 
 
 def gpio_test_loop():
