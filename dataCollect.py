@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 from scipy import signal
 import pickle
+import copy
 
 class KalmanVolumeFlow:
     def __init__(self, dt, process_var_flow=0.01, meas_var=1.0):
@@ -74,7 +75,7 @@ class DataBuffer(threading.Thread):
         self.lc_offset = -1634.5324180655623
 
         # Buffer config
-        self.max_length = 100
+        self.max_length = 10
 
         self.buffers = {
             "icp": {
@@ -123,7 +124,7 @@ class DataBuffer(threading.Thread):
         next_time = time.perf_counter()
 
         while self.running:
-            time.sleep(2)
+            time.sleep(0.1)
             loop_start = time.perf_counter()
 
             for ch in self.channels:
@@ -222,7 +223,7 @@ class DataBuffer(threading.Thread):
             buf = self.buffers[sensor][stream]
 
             if len(buf) >= self.max_length:
-                batch = buf.copy()
+                batch = copy.copy(buf)
                 buf.clear()
                 return batch
 
