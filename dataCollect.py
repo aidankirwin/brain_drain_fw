@@ -9,6 +9,53 @@ import pandas as pd
 from scipy import signal
 import pickle
 
+class KalmanVolumeFlow:
+    def __init__(self, dt, process_var_flow=0.01, meas_var=1.0):
+        self.dt = dt
+
+        # State: [volume, flow]
+        self.x = np.zeros((2, 1))
+
+        # Covariance
+        self.P = np.eye(2)
+
+        # Matrices
+        self.F = np.array([[1, dt],
+                           [0, 1]])
+
+        self.H = np.array([[1, 0]])
+
+        self.Q = np.array([[0, 0],
+                           [0, process_var_flow]])
+
+        self.R = np.array([[meas_var]])
+
+        self.initialized = False
+
+    def update(self, volume_meas):
+        z = np.array([[volume_meas]])
+
+        # Initialize on first measurement
+        if not self.initialized:
+            self.x = np.array([[volume_meas],
+                               [0]])
+            self.initialized = True
+            return self.x.flatten()
+
+        # Prediction
+        x_pred = self.F @ self.x
+        P_pred = self.F @ self.P @ self.F.T + self.Q
+
+        # Update
+        y = z - self.H @ x_pred
+        S = self.H @ P_pred @ self.H.T + self.R
+        K = P_pred @ self.H.T @ np.linalg.inv(S)
+
+        self.x = x_pred + K @ y
+        self.P = (np.eye(2) - K @ self.H) @ P_pred
+
+        return self.x.flatten()
+
 class DataBuffer(threading.Thread):
     def __init__(self):
         super().__init__()
@@ -35,9 +82,20 @@ class DataBuffer(threading.Thread):
         self.control_load2_buffer = []
 
         # FILTERS
-        '''filters = coefficients, pass to filter
-        function along with state, and current value.
-        do that each time we get a new sample.'''
+        sos_pressure = signal.butter(4, 20, btype='low', output='sos', fs=100)
+        sos_loadcell = signal.butter(4, 0.5, btype='low', output='sos', fs=100)
+        # Kalman parameters
+        process_var = 1e-6  # process variance
+        meas_var = 38791215.89354596 # from test data
+
+        kf = KalmanVolumeFlow(
+            1/100,
+            process_var_flow=process_var,
+            meas_var=meas_var
+        )
+
+        volume_est = []
+        flow_est = []
 
         # I2C + ADC setup
         self.i2c = busio.I2C(board.SCL, board.SDA)
@@ -103,14 +161,16 @@ class DataBuffer(threading.Thread):
                 pd.DataFrame(reading.reshape(-1, 1), columns=self.loaded_model['poly'].feature_names_in_)
             )
             reading = self.loaded_model['quad_model'].predict(reading)
+            reading = reading[0]
 
+            # filtering
+            
         elif ch == 1 or ch == 3:    # load cell
             # Calibration
             scale = 0.32830703
             offset = -1634.5324180655623
             reading = reading * scale + offset
 
-        
         # Convert
         return reading
 
