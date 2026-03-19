@@ -8,6 +8,7 @@ import pandas as pd
 from scipy import signal
 import pickle
 import copy
+import random
 
 class KalmanVolumeFlow:
     def __init__(self, dt, process_var_flow=0.01, meas_var=1.0):
@@ -158,7 +159,7 @@ class DataBuffer(threading.Thread):
 
     def read_channel(self, ch):
         # reading = float(self.ads.read(ch))
-        reading = 12
+        reading = 12 + random.random(0, 2)
         reading_arr = np.atleast_1d(reading)
 
         if ch == 0:  # pressure
