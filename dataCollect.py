@@ -21,10 +21,7 @@ class DataBuffer(threading.Thread):
         self.period = 0.0033  # ~300 Hz total loop
 
         with open('model.pkl', 'rb') as handle:
-            self.loaded_model_icp = pickle.load(handle)
-
-        with open('model.pkl', 'rb') as handle:
-            self.loaded_model_ls = pickle.load(handle)
+            self.loaded_model = pickle.load(handle)
 
         # Buffers
         self.max_length = 100
@@ -107,7 +104,6 @@ class DataBuffer(threading.Thread):
                 pd.DataFrame(voltage.reshape(-1, 1), columns=self.loaded_model['poly'].feature_names_in_)
             )
             voltage = self.loaded_model['quad_model'].predict(voltage)
-
 
         elif ch == 1 or ch == 3:    # load cell
             # Calibration
