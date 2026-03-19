@@ -10,6 +10,9 @@ class LayoutDesigns(tk.Frame):
         self.controller = controller
         self.images = {}  # keep references to images to avoid garbage collection
 
+    def irrigate_activate(self, event=None):
+        self.controller.irrigate()
+
     def header(self, title="Monitor"):   
         status_frame = tk.Frame(self, height=120, bg="white")
         status_frame.pack(fill="x")
@@ -91,7 +94,7 @@ class LayoutDesigns(tk.Frame):
     )
         # place it at the far right (relx=0.95) and middle vertically (rely=0.5)
         self.irrigate_btn.place(relx=0.95, rely=0.6, anchor="e")
-        self.irrigate_btn.bind("<Button-1>", lambda e: self.controller.irrigate)
+        self.irrigate_btn.bind("<Button-1>", self.irrigate_activate)
         
         # create a horizontal divider
         divider_line1 = tk.Frame(self, height=40, bg="white")
