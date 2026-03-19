@@ -101,7 +101,6 @@ class DataBuffer(threading.Thread):
 
         # Read voltage
         voltage = np.array(self.ads.read(ch))
-
         # Calibration curve to convert voltage to ICP value (example: linear scaling)
         '''CALIBRATION CURVE'''
         voltage = self.loaded_model['poly'].transform(
@@ -113,7 +112,7 @@ class DataBuffer(threading.Thread):
         '''FILTERS'''
 
         # Convert
-        return voltage * self.voltage_to_icp_factor
+        return float(voltage[0]) * self.voltage_to_icp_factor
 
     def add_data(self, buffer, value):
         with self.lock:
