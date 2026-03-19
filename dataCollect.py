@@ -7,6 +7,7 @@ import copy
 import numpy as np
 import pandas as pd
 from scipy import signal
+import pickle
 
 class DataBuffer(threading.Thread):
     def __init__(self):
@@ -100,12 +101,19 @@ class DataBuffer(threading.Thread):
 
         # Calibration curve to convert voltage to ICP value (example: linear scaling)
         '''CALIBRATION CURVE'''
+        with open('model.pkl', 'rb') as handle:
+            loaded_model = pickle.load(handle)
+
+        voltage = loaded_model['poly'].transform(voltage.reshape(-1, 1))
+        voltage = loaded_model['quad_model'].predict(voltage)
+        filt_voltage = loaded_model['poly'].transform(filt_voltage.reshape(-1, 1))
+        filt_voltage = loaded_model['quad_model'].predict(filt_voltage)
 
         # Apply filters
         '''FILTERS'''
 
         # Convert
-        return voltage * self.voltage_to_icp_factor
+        return filt_voltage * self.voltage_to_icp_factor
 
     def add_data(self, buffer, value):
         with self.lock:
