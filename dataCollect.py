@@ -100,7 +100,7 @@ class DataBuffer(threading.Thread):
         time.sleep(0.001)  # ~1 ms (tune if needed)
 
         # Read voltage
-        voltage = self.ads.read(ch)
+        voltage = np.array(self.ads.read(ch))
 
         # Calibration curve to convert voltage to ICP value (example: linear scaling)
         '''CALIBRATION CURVE'''
