@@ -3,7 +3,6 @@ import time
 import board
 import busio
 import adafruit_ads1x15.ads1115 as ADS
-import copy
 import numpy as np
 import pandas as pd
 from scipy import signal
@@ -65,64 +64,59 @@ class DataBuffer(threading.Thread):
         self.running = True
 
         # Timing
-        self.period = 0.0033  # ~300 Hz total loop
+        self.period = 0.0033  # ~300 Hz
 
-        # calibration models
+        # Load calibration model
         with open('model.pkl', 'rb') as handle:
             self.loaded_model = pickle.load(handle)
 
         self.lc_scale = 0.32830703
         self.lc_offset = -1634.5324180655623
 
-        # Buffers
+        # Buffer config
         self.max_length = 100
-        self.display_icp_buffer = []
-        self.control_icp_buffer = []
 
-        self.display_load1_buffer = []
-        self.control_load1_buffer = []
-        self.flow_load1_buffer = []
+        self.buffers = {
+            "icp": {
+                "display": [],
+                "control": []
+            },
+            "load1": {
+                "display": [],
+                "control": [],
+                "flow": []
+            },
+            "load2": {
+                "display": [],
+                "control": [],
+                "flow": []
+            }
+        }
 
-        self.display_load2_buffer = []
-        self.control_load2_buffer = []
-        self.flow_load2_buffer = []
-
-        # FILTERS
+        # Filters
         self.sos_pressure = signal.butter(4, 20, btype='low', output='sos', fs=100)
         self.sos_loadcell = signal.butter(4, 0.5, btype='low', output='sos', fs=100)
-        # Kalman parameters
-        process_var = 1e-6  # process variance
-        meas_var = 38791215.89354596 # from test data
 
         self.z_pressure = None
         self.z_load1 = None
         self.z_load2 = None
 
-        self.kf_1 = KalmanVolumeFlow(
-            1/100,
-            process_var_flow=process_var,
-            meas_var=meas_var
-        )
+        # Kalman filters
+        process_var = 1e-6
+        meas_var = 38791215.89354596
 
-        self.kf_2 = KalmanVolumeFlow(
-            1/100,
-            process_var_flow=process_var,
-            meas_var=meas_var
-        )
+        self.kf_1 = KalmanVolumeFlow(1/100, process_var, meas_var)
+        self.kf_2 = KalmanVolumeFlow(1/100, process_var, meas_var)
 
-        # I2C + ADC setup
+        # I2C + ADC
         self.i2c = busio.I2C(board.SCL, board.SDA)
         self.ads = ADS.ADS1115(self.i2c)
-
-        # Optional: increase data rate (important!)
-        self.ads.data_rate = 860  # max speed
-
-        self.voltage_to_icp_factor = 10
+        self.ads.data_rate = 860
 
         # Thread safety
         self.lock = threading.Lock()
 
-        # Channels to read
+        # Channels
         self.channels = [0, 1, 2]
 
     def run(self):
@@ -130,57 +124,54 @@ class DataBuffer(threading.Thread):
 
         while self.running:
             loop_start = time.perf_counter()
-            
+
             for ch in self.channels:
                 value = self.read_channel(ch)
 
                 if ch == 0:
-                    self.add_data(self.display_icp_buffer, value)
-                    self.add_data(self.control_icp_buffer, value)
+                    self.add_data("icp", "display", value)
+                    self.add_data("icp", "control", value)
 
                 elif ch == 1:
-                    self.add_data(self.display_load1_buffer, value)
-                    self.add_data(self.control_load1_buffer, value[0])
-                    self.add_data(self.flow_load1_buffer, value[1])
+                    self.add_data("load1", "display", value[0])  # weight
+                    self.add_data("load1", "control", value[0])
+                    self.add_data("load1", "flow", value[1])
 
-                elif ch == 3:
-                    self.add_data(self.display_load2_buffer, value)
-                    self.add_data(self.control_load2_buffer, value[0])
-                    self.add_data(self.flow_load2_buffer, value[1])
+                elif ch == 2:
+                    self.add_data("load2", "display", value[0])
+                    self.add_data("load2", "control", value[0])
+                    self.add_data("load2", "flow", value[1])
 
             loop_end = time.perf_counter()
+            print(f"Loop period: {loop_end - loop_start:.6f}s")
 
-            # ---- measurements ----
-            loop_period = loop_end - loop_start
-
-            print(f"Loop period: {loop_period:.6f}s | ")
-
-            # ---- timing control ----
+            # Timing control
             next_time += self.period
             sleep_time = next_time - time.perf_counter()
 
             if sleep_time > 0:
                 time.sleep(sleep_time)
             else:
-                # We're lagging → reset schedule
                 next_time = time.perf_counter()
 
     def read_channel(self, ch):
-        # Small delay to allow conversion to settle
-
-        reading = float(self.ads.read(ch))  # scalar from ADC
-        reading_arr = np.atleast_1d(reading)  # convert to 1-D array for filtering
+        reading = float(self.ads.read(ch))
+        reading_arr = np.atleast_1d(reading)
 
         if ch == 0:  # pressure
-            reading_df = pd.DataFrame(reading_arr.reshape(-1, 1),
-                                    columns=self.loaded_model['poly'].feature_names_in_)
+            reading_df = pd.DataFrame(
+                reading_arr.reshape(-1, 1),
+                columns=self.loaded_model['poly'].feature_names_in_
+            )
             reading_arr = self.loaded_model['poly'].transform(reading_df)
             reading_arr = self.loaded_model['quad_model'].predict(reading_arr)
 
             if self.z_pressure is None:
                 self.z_pressure = signal.sosfilt_zi(self.sos_pressure) * reading_arr
 
-            reading_arr, self.z_pressure = signal.sosfilt(self.sos_pressure, reading_arr, zi=self.z_pressure)
+            reading_arr, self.z_pressure = signal.sosfilt(
+                self.sos_pressure, reading_arr, zi=self.z_pressure
+            )
             return reading_arr[0]
 
         elif ch == 1:  # load cell 1
@@ -189,10 +180,11 @@ class DataBuffer(threading.Thread):
             if self.z_load1 is None:
                 self.z_load1 = signal.sosfilt_zi(self.sos_loadcell) * reading_arr
 
-            reading_arr, self.z_load1 = signal.sosfilt(self.sos_loadcell, reading_arr, zi=self.z_load1)
-            reading_scalar = reading_arr[0]  # convert back to scalar for Kalman
+            reading_arr, self.z_load1 = signal.sosfilt(
+                self.sos_loadcell, reading_arr, zi=self.z_load1
+            )
 
-            x = self.kf_1.update(reading_scalar)
+            x = self.kf_1.update(reading_arr[0])
             return x[0], x[1]
 
         elif ch == 2:  # load cell 2
@@ -201,34 +193,30 @@ class DataBuffer(threading.Thread):
             if self.z_load2 is None:
                 self.z_load2 = signal.sosfilt_zi(self.sos_loadcell) * reading_arr
 
-            reading_arr, self.z_load2 = signal.sosfilt(self.sos_loadcell, reading_arr, zi=self.z_load2)
-            reading_scalar = reading_arr[0]
+            reading_arr, self.z_load2 = signal.sosfilt(
+                self.sos_loadcell, reading_arr, zi=self.z_load2
+            )
 
-            x = self.kf_1.update(reading_scalar)
+            x = self.kf_2.update(reading_arr[0])
             return x[0], x[1]
 
-    def add_data(self, buffer, value):
+    def add_data(self, sensor, stream, value):
         with self.lock:
-            buffer.append(value)
-            if len(buffer) > self.max_length:
-                buffer.pop(0)
+            buf = self.buffers[sensor][stream]
+            buf.append(value)
+            if len(buf) > self.max_length:
+                buf.pop(0)
 
-    # Return the current buffer contents (for plotting)
-    def fetch_display_buffer(self):
+    def fetch_buffer(self, sensor, stream):
         with self.lock:
-            if len(self.display_icp_buffer) >= self.max_length:
-                batch = copy.copy(self.display_icp_buffer)
-                self.display_icp_buffer.clear()
-                return list(batch)  # return a copy of the batch for plotting
-            return None  # Not enough data to release yet
-        
-    def fetch_control_buffer(self):
-        with self.lock:
-            if len(self.control_icp_buffer) >= self.max_length:
-                batch = copy.copy(self.control_icp_buffer)
-                self.control_icp_buffer.clear()
-                return list(batch)  # return a copy of the batch for control logic
-            return None  # Not enough data to release yet
-    
+            buf = self.buffers[sensor][stream]
+
+            if len(buf) >= self.max_length:
+                batch = buf.copy()
+                buf.clear()
+                return batch
+
+            return None
+
     def stop(self):
         self.running = False
