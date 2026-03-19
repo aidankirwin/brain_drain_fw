@@ -313,7 +313,7 @@ class ICPWaveform(LayoutDesigns):
         self.current_icp.delete("1.0", tk.END)
         self.current_icp.insert(tk.END, "\n", "small_font")
         self.current_icp.insert(tk.END, "Current ICP:\n", "normal_font")
-        self.current_icp.insert(tk.END, str(sum(display_batch) / len(display_batch)), "big_font")
+        self.current_icp.insert(tk.END, f"{sum(display_batch) / len(display_batch) :.1f}", "big_font")
         self.current_icp.insert(tk.END, "mmHg\n", "small_font")
         self.current_icp.config(state=tk.DISABLED)
         
