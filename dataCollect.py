@@ -109,9 +109,9 @@ class DataBuffer(threading.Thread):
         self.kf_2 = KalmanVolumeFlow(1/100, process_var, meas_var)
 
         # I2C + ADC
-        self.i2c = busio.I2C(board.SCL, board.SDA)
-        self.ads = ADS.ADS1115(self.i2c)
-        self.ads.data_rate = 860
+        # self.i2c = busio.I2C(board.SCL, board.SDA)
+        # self.ads = ADS.ADS1115(self.i2c)
+        # self.ads.data_rate = 860
 
         # Thread safety
         self.lock = threading.Lock()
@@ -155,7 +155,8 @@ class DataBuffer(threading.Thread):
                 next_time = time.perf_counter()
 
     def read_channel(self, ch):
-        reading = float(self.ads.read(ch))
+        # reading = float(self.ads.read(ch))
+        reading = 12000
         reading_arr = np.atleast_1d(reading)
 
         if ch == 0:  # pressure
@@ -175,6 +176,7 @@ class DataBuffer(threading.Thread):
             return reading_arr[0]
 
         elif ch == 1:  # load cell 1
+            reading_arr = np.atleast_1d(5250)
             reading_arr = reading_arr * self.lc_scale + self.lc_offset
 
             if self.z_load1 is None:
