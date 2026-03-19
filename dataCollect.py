@@ -185,7 +185,6 @@ class DataBuffer(threading.Thread):
             )
 
             x = self.kf_1.update(reading_arr[0])
-            print(x)
             return x[0], x[1]
 
         elif ch == 2:  # load cell 2
