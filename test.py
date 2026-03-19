@@ -43,7 +43,7 @@ def gpio_test_loop():
             # --- Motor ON loop ---
             for i in range(50):
                 print("motor go go go")
-                motor.value = 140 / 255.0  # Convert Arduino PWM (0–255) to 0–1
+                motor.value = 255 / 255.0  # Convert Arduino PWM (0–255) to 0–1
 
             # --- Motor OFF loop ---
             for i in range(50):
