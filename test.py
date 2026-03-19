@@ -21,9 +21,9 @@ def gpio_test_loop():
     GPIO.setmode(GPIO.BCM)
 
     # Pin definitions
-    step_pin = 3
+    step_pin = 6
     motor_pin = 13
-    servo_pin = 11
+    servo_pin = 12
 
     # Setup pins
     GPIO.setup(step_pin, GPIO.OUT)
