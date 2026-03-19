@@ -164,7 +164,7 @@ class DataBuffer(threading.Thread):
     def read_channel(self, ch):
         # Small delay to allow conversion to settle
 
-        reading = np.array(self.ads.read(ch))
+        reading = np.atleast_1d(self.ads.read(ch))
 
         # Calibration curves and filtering
         if ch == 0: # pressure
@@ -181,7 +181,6 @@ class DataBuffer(threading.Thread):
 
         elif ch == 1:    # load cell 1
             # Calibration
-            reading.reshape(-1, 1)
             scale = 0.32830703
             offset = -1634.5324180655623
             reading = reading * scale + offset
@@ -196,7 +195,6 @@ class DataBuffer(threading.Thread):
 
         elif ch == 2:    # load cell 2
             # Calibration
-            reading.reshape(-1, 1)
             scale = 0.32830703
             offset = -1634.5324180655623
             reading = reading * scale + offset
