@@ -7,9 +7,6 @@ from motor import Motor
 
 class App:
     def __init__(self, root):
-        self.root = root
-        self.root.update_idletasks()
-        self.root.title("BrainDrain Hardware Test")
 
         # Initial target ICP value
         self.target_icp = 15
@@ -37,9 +34,10 @@ class App:
         print('creating main window')
         # creating the main window
         self.root = root
-        self.root.geometry("400x500")
+        # self.root.geometry("400x500")
         self.root.configure(bg="white")
         self.root.title("NeuroFlow")
+        self.root.attributes("-fullscreen", True)
 
         # container for switching pages
         self.container = tk.Frame(root, bg="white")
