@@ -81,7 +81,7 @@ class App:
         self.root = root
         self.root.update_idletasks()
         self.root.title("BrainDrain Hardware Test")
-        self.root.attributes("-fullscreen", True)
+        # self.root.attributes("-fullscreen", True)
 
         # Main frame
         frame = tk.Frame(root)
