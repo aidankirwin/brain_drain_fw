@@ -177,11 +177,11 @@ class DataBuffer(threading.Thread):
             if self.z_pressure is None:
                 self.z_pressure = signal.sosfilt_zi(self.sos_pressure) * reading
             reading, self.z_pressure = signal.sosfilt(self.sos_pressure, self.z_pressure)
-
-            reading = reading[0]
+            return reading[0]
 
         elif ch == 1:    # load cell 1
             # Calibration
+            reading.reshape(-1, 1)
             scale = 0.32830703
             offset = -1634.5324180655623
             reading = reading * scale + offset
@@ -196,6 +196,7 @@ class DataBuffer(threading.Thread):
 
         elif ch == 2:    # load cell 2
             # Calibration
+            reading.reshape(-1, 1)
             scale = 0.32830703
             offset = -1634.5324180655623
             reading = reading * scale + offset
@@ -207,9 +208,6 @@ class DataBuffer(threading.Thread):
 
             x = self.kf_1.update(reading)
             return x[0], x[1]   # return weight and flow estimates
-
-        # Convert
-        return np.round(reading,1)
 
     def add_data(self, buffer, value):
         with self.lock:
