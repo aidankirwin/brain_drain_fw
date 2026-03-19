@@ -172,6 +172,7 @@ class DataBuffer(threading.Thread):
 
         # Calibration curves and filtering
         if ch == 0: # pressure
+            reading = np.array(reading)
             reading = self.loaded_model['poly'].transform(
                 pd.DataFrame(reading.reshape(-1, 1), columns=self.loaded_model['poly'].feature_names_in_)
             )
@@ -193,6 +194,7 @@ class DataBuffer(threading.Thread):
                 self.z_pressure = signal.sosfilt_zi(self.sos_loadcell) * reading
             reading, self.z_load1 = signal.sosfilt(self.sos_loadcell, [reading], self.z_load1)
 
+            reading = reading[0]
             x = self.kf_1.update(reading)
             return x[0], x[1]   # return weight and flow estimates
 
@@ -205,6 +207,7 @@ class DataBuffer(threading.Thread):
                 self.z_load2 = signal.sosfilt_zi(self.sos_loadcell) * reading
             reading, self.z_load2 = signal.sosfilt(self.sos_loadcell, [reading], self.z_load2)
 
+            reading = reading[0]
             x = self.kf_1.update(reading)
             return x[0], x[1]   # return weight and flow estimates
 
