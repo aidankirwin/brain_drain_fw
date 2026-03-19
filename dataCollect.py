@@ -168,50 +168,44 @@ class DataBuffer(threading.Thread):
     def read_channel(self, ch):
         # Small delay to allow conversion to settle
 
-        reading = self.ads.read(ch)
+        reading = float(self.ads.read(ch))  # scalar from ADC
+        reading_arr = np.atleast_1d(reading)  # convert to 1-D array for filtering
 
-        # Calibration curves and filtering
-        if ch == 0: # pressure
-            reading = np.array(reading)
-            reading = self.loaded_model['poly'].transform(
-                pd.DataFrame(reading.reshape(-1, 1), columns=self.loaded_model['poly'].feature_names_in_)
-            )
-            reading = self.loaded_model['quad_model'].predict(reading)
-            reading = [0][0]
-            print(reading)
+        if ch == 0:  # pressure
+            reading_df = pd.DataFrame(reading_arr.reshape(-1, 1),
+                                    columns=self.loaded_model['poly'].feature_names_in_)
+            reading_arr = self.loaded_model['poly'].transform(reading_df)
+            reading_arr = self.loaded_model['quad_model'].predict(reading_arr)
 
-            # filtering
             if self.z_pressure is None:
-                self.z_pressure = signal.sosfilt_zi(self.sos_pressure) * reading
-            print(self.z_pressure)
-            reading, self.z_pressure = signal.sosfilt(self.sos_pressure, [reading], self.z_pressure)
-            return reading[0]
+                self.z_pressure = signal.sosfilt_zi(self.sos_pressure) * reading_arr
 
-        elif ch == 1:    # load cell 1
-            # Calibration
-            reading = reading * self.lc_scale + self.lc_offset
+            reading_arr, self.z_pressure = signal.sosfilt(self.sos_pressure, reading_arr, zi=self.z_pressure)
+            return reading_arr[0]
 
-            # filtering
-            if self.z_pressure is None:
-                self.z_pressure = signal.sosfilt_zi(self.sos_loadcell) * reading
-            reading, self.z_load1 = signal.sosfilt(self.sos_loadcell, [reading], self.z_load1)
+        elif ch == 1:  # load cell 1
+            reading_arr = reading_arr * self.lc_scale + self.lc_offset
 
-            reading = reading[0]
-            x = self.kf_1.update(reading)
-            return x[0], x[1]   # return weight and flow estimates
+            if self.z_load1 is None:
+                self.z_load1 = signal.sosfilt_zi(self.sos_loadcell) * reading_arr
 
-        elif ch == 2:    # load cell 2
-            # Calibration
-            reading = reading * self.lc_scale + self.lc_offset
+            reading_arr, self.z_load1 = signal.sosfilt(self.sos_loadcell, reading_arr, zi=self.z_load1)
+            reading_scalar = reading_arr[0]  # convert back to scalar for Kalman
 
-            # filtering
+            x = self.kf_1.update(reading_scalar)
+            return x[0], x[1]
+
+        elif ch == 2:  # load cell 2
+            reading_arr = reading_arr * self.lc_scale + self.lc_offset
+
             if self.z_load2 is None:
-                self.z_load2 = signal.sosfilt_zi(self.sos_loadcell) * reading
-            reading, self.z_load2 = signal.sosfilt(self.sos_loadcell, [reading], self.z_load2)
+                self.z_load2 = signal.sosfilt_zi(self.sos_loadcell) * reading_arr
 
-            reading = reading[0]
-            x = self.kf_1.update(reading)
-            return x[0], x[1]   # return weight and flow estimates
+            reading_arr, self.z_load2 = signal.sosfilt(self.sos_loadcell, reading_arr, zi=self.z_load2)
+            reading_scalar = reading_arr[0]
+
+            x = self.kf_1.update(reading_scalar)
+            return x[0], x[1]
 
     def add_data(self, buffer, value):
         with self.lock:
