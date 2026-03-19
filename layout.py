@@ -91,7 +91,7 @@ class LayoutDesigns(tk.Frame):
     )
         # place it at the far right (relx=0.95) and middle vertically (rely=0.5)
         self.irrigate_btn.place(relx=0.95, rely=0.6, anchor="e")
-        self.irrigate_btn.bind("<Button-1>", lambda e: self.controller.show("HomeScreen"))
+        self.irrigate_btn.bind("<Button-1>", lambda e: self.controller.irrigate)
         
         # create a horizontal divider
         divider_line1 = tk.Frame(self, height=40, bg="white")
