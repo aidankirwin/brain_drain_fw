@@ -21,7 +21,10 @@ class DataBuffer(threading.Thread):
         self.period = 0.0033  # ~300 Hz total loop
 
         with open('model.pkl', 'rb') as handle:
-            self.loaded_model = pickle.load(handle)
+            self.loaded_model_icp = pickle.load(handle)
+
+        with open('model.pkl', 'rb') as handle:
+            self.loaded_model_ls = pickle.load(handle)
 
         # Buffers
         self.max_length = 100
@@ -94,16 +97,22 @@ class DataBuffer(threading.Thread):
 
     def read_channel(self, ch):
         # Small delay to allow conversion to settle
-        time.sleep(0.001)  # ~1 ms (tune if needed)
+        # time.sleep(0.001)  # ~1 ms (tune if needed)
 
         # Read voltage
         voltage = np.array(self.ads.read(ch))
         # Calibration curve to convert voltage to ICP value (example: linear scaling)
         '''CALIBRATION CURVE'''
-        voltage = self.loaded_model['poly'].transform(
-            pd.DataFrame(voltage.reshape(-1, 1), columns=self.loaded_model['poly'].feature_names_in_)
-        )
-        voltage = self.loaded_model['quad_model'].predict(voltage)
+        if ch == 0:
+            voltage = self.loaded_model['poly'].transform(
+                pd.DataFrame(voltage.reshape(-1, 1), columns=self.loaded_model['poly'].feature_names_in_)
+            )
+            voltage = self.loaded_model['quad_model'].predict(voltage)
+        elif ch == 1 or ch == 3:
+            # Calibration
+            scale = 0.32830703
+            offset = -1634.5324180655623
+            voltage = voltage * scale + offset
 
         # Apply filters
         '''FILTERS'''
