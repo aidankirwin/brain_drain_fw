@@ -165,7 +165,7 @@ class ICPWaveform(LayoutDesigns):
                 # Absolute fallback: just put it at the end
                 widget.insert(tk.END, val, ("big_font", "val"))
         
-        widget.configure(state="disabled")
+        widget.configure(state=tk.DISABLED)
     
     def update_current_volume(self):
         self.waveform.after(30, self.update_waveform)
@@ -199,7 +199,7 @@ class ICPWaveform(LayoutDesigns):
         self.current_icp.insert(tk.END, "10", "big_font")
         self.current_icp.insert(tk.END, "mmHg\n", "small_font")
         
-        self.current_icp.configure(state='disabled')
+        self.current_icp.configure(state=tk.DISABLED)
 
         # --- TARGET ICP ---
         self.target_icp = tk.Text(grid_container, bg="white", fg="black", height=8, width=20, 
@@ -231,7 +231,7 @@ class ICPWaveform(LayoutDesigns):
         self.vdbag.grid(row=2, column=0, sticky="nsew", padx=(1,0), pady=(0,1))
         self.vdbag.tag_configure('normal_font', font=('Helvetica', 20), justify='right')
         self.vdbag.insert(tk.END, "\nVolume in \nDrainage Bag:\n", "normal_font")
-        self.vdbag.configure(state="disabled")
+        self.vdbag.configure(state=tk.DISABLED)
 
         self.vdbagnum = tk.Text(grid_container, bg="white", fg="black", height=2, borderwidth=0, highlightthickness=0, padx=10, pady=5)
         self.vdbagnum.grid(row=2, column=1, sticky="nsew", padx=(0,1), pady=(1,1))
@@ -242,7 +242,7 @@ class ICPWaveform(LayoutDesigns):
         
         self.vdbagnum.insert(tk.END, "150", "big_font")
         self.vdbagnum.insert(tk.END, "ml", "normal_font")
-        self.vdbagnum.configure(state="disabled")
+        self.vdbagnum.configure(state=tk.DISABLED)
 
         # --- WAVEFORM ---
         grid_container_2 = tk.Frame(outer_frame, bg="black")
@@ -319,16 +319,16 @@ class ICPWaveform(LayoutDesigns):
         self.current_icp.config(state=tk.DISABLED)
 
         # update the "current volume" text
-        self.vdbag.configure(state="enabled")
-        self.vdbagnum.configure(state="enabled")
+        self.vdbag.configure(state=tk.NORMAL)
+        self.vdbagnum.configure(state=tk.NORMAL)
         self.vdbag.delete("1.0", tk.END)
         self.vdbagnum.delete("1.0", tk.END)
         self.vdbag.insert(tk.END, "\nVolume in \nDrainage Bag:\n", "normal_font")
         self.vdbagnum.insert(tk.END, "\n", "small_font")
         self.vdbagnum.insert(tk.END, f"{sum(display_batch_vd) / len(display_batch_vd) :.1f}", "big_font")
         self.vdbagnum.insert(tk.END, "ml", "normal_font")
-        self.vdbagnum.configure(state="disabled")
-        self.vdbag.configure(state="disabled")
+        self.vdbagnum.configure(state=tk.DISABLED)
+        self.vdbag.configure(state=tk.DISABLED)
         
         # Append new points into the sliding waveform window
         for icp_val in display_batch_icp:
