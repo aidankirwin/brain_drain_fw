@@ -30,6 +30,7 @@ def gpio_test_loop():
 
     # Servo setup
     servo = AngularServo(servo_pin, min_angle=0, max_angle=180)
+    servo.detach()
 
     # Delay settings
     delay_time = 0.01  # 10 ms
@@ -38,13 +39,13 @@ def gpio_test_loop():
         while True:
 
             # --- Motor ON loop ---
-            for i in range(100):
+            for i in range(2):
                 print("motor go go go")
                 motor.value = 200/255.0  # Convert Arduino PWM (0–255) to 0–1
                 time.sleep(1)
 
             # --- Motor OFF loop ---
-            for i in range(100):
+            for i in range(1):
                 print("motor stoooooop")
                 motor.value = 0
                 time.sleep(1)
