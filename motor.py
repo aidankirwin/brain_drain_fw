@@ -23,10 +23,10 @@ class Motor(threading.Thread):
                 else:
                     print('motor')
                     time.sleep(self.interval)
-                    # GPIO.output(self.STEP_PIN, GPIO.HIGH)
-                    # time.sleep(0.005)
-                    # GPIO.output(self.STEP_PIN, GPIO.LOW)
-                    # time.sleep(self.motor_control.delay_time)
+                    GPIO.output(self.STEP_PIN, GPIO.HIGH)
+                    time.sleep(0.005)
+                    GPIO.output(self.STEP_PIN, GPIO.LOW)
+                    time.sleep(self.motor_control.delay_time)
 
         except KeyboardInterrupt:
             print("Stopped")
