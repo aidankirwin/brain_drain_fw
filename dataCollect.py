@@ -77,25 +77,34 @@ class DataBuffer(threading.Thread):
 
         self.display_load1_buffer = []
         self.control_load1_buffer = []
+        self.flow_load1_buffer = []
 
         self.display_load2_buffer = []
         self.control_load2_buffer = []
+        self.flow_load2_buffer = []
 
         # FILTERS
-        sos_pressure = signal.butter(4, 20, btype='low', output='sos', fs=100)
-        sos_loadcell = signal.butter(4, 0.5, btype='low', output='sos', fs=100)
+        self.sos_pressure = signal.butter(4, 20, btype='low', output='sos', fs=100)
+        self.sos_loadcell = signal.butter(4, 0.5, btype='low', output='sos', fs=100)
         # Kalman parameters
         process_var = 1e-6  # process variance
         meas_var = 38791215.89354596 # from test data
 
-        kf = KalmanVolumeFlow(
+        self.z_pressure = None
+        self.z_load1 = None
+        self.z_load2 = None
+
+        self.kf_1 = KalmanVolumeFlow(
             1/100,
             process_var_flow=process_var,
             meas_var=meas_var
         )
 
-        volume_est = []
-        flow_est = []
+        self.kf_2 = KalmanVolumeFlow(
+            1/100,
+            process_var_flow=process_var,
+            meas_var=meas_var
+        )
 
         # I2C + ADC setup
         self.i2c = busio.I2C(board.SCL, board.SDA)
@@ -127,11 +136,13 @@ class DataBuffer(threading.Thread):
 
                 elif ch == 1:
                     self.add_data(self.display_load1_buffer, value)
-                    self.add_data(self.control_load1_buffer, value)
+                    self.add_data(self.control_load1_buffer, value[0])
+                    self.add_data(self.flow_load1_buffer, value[1])
 
                 elif ch == 3:
                     self.add_data(self.display_load2_buffer, value)
-                    self.add_data(self.control_load2_buffer, value)
+                    self.add_data(self.control_load2_buffer, value[0])
+                    self.add_data(self.flow_load2_buffer, value[1])
 
             loop_end = time.perf_counter()
 
@@ -161,15 +172,41 @@ class DataBuffer(threading.Thread):
                 pd.DataFrame(reading.reshape(-1, 1), columns=self.loaded_model['poly'].feature_names_in_)
             )
             reading = self.loaded_model['quad_model'].predict(reading)
-            reading = reading[0]
 
             # filtering
+            if self.z_pressure is None:
+                self.z_pressure = signal.sosfilt_zi(self.sos_pressure) * reading
+            reading, self.z_pressure = signal.sosfilt(self.sos_pressure, self.z_pressure)
 
-        elif ch == 1 or ch == 3:    # load cell
+            reading = reading[0]
+
+        elif ch == 1:    # load cell 1
             # Calibration
             scale = 0.32830703
             offset = -1634.5324180655623
             reading = reading * scale + offset
+
+            # filtering
+            if self.z_pressure is None:
+                self.z_pressure = signal.sosfilt_zi(self.sos_loadcell) * reading
+            reading, self.z_load1 = signal.sosfilt(self.sos_loadcell, self.z_load1)
+
+            x = self.kf_1.update(reading)
+            return x[0], x[1]   # return weight and flow estimates
+
+        elif ch == 2:    # load cell 2
+            # Calibration
+            scale = 0.32830703
+            offset = -1634.5324180655623
+            reading = reading * scale + offset
+
+            # filtering
+            if self.z_load2 is None:
+                self.z_load2 = signal.sosfilt_zi(self.sos_loadcell) * reading
+            reading, self.z_load2 = signal.sosfilt(self.sos_loadcell, self.z_load2)
+
+            x = self.kf_1.update(reading)
+            return x[0], x[1]   # return weight and flow estimates
 
         # Convert
         return np.round(reading,1)
