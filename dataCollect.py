@@ -5,6 +5,8 @@ import busio
 import adafruit_ads1x15.ads1115 as ADS
 import copy
 import numpy as np
+import pandas as pd
+from scipy import signal
 
 class DataBuffer(threading.Thread):
     def __init__(self):
@@ -27,6 +29,11 @@ class DataBuffer(threading.Thread):
 
         self.display_load2_buffer = []
         self.control_load2_buffer = []
+
+        # FILTERS
+        '''filters = coefficients, pass to filter
+        function along with state, and current value.
+        do that each time we get a new sample.'''
 
         # I2C + ADC setup
         self.i2c = busio.I2C(board.SCL, board.SDA)
@@ -90,6 +97,12 @@ class DataBuffer(threading.Thread):
 
         # Read voltage
         voltage = self.ads.read(ch)
+
+        # Calibration curve to convert voltage to ICP value (example: linear scaling)
+        '''CALIBRATION CURVE'''
+
+        # Apply filters
+        '''FILTERS'''
 
         # Convert
         return voltage * self.voltage_to_icp_factor
