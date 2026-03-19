@@ -22,8 +22,8 @@ class App:
         print('starting motor control')
 
         # Start motor control thread (thread_4)
-        # self.motor_control = MotorControl(self.data_buffer, self.target_icp, self.is_draining)
-        # self.motor_control.start()
+        self.motor_control = MotorControl(self.data_buffer, self.target_icp, self.is_draining)
+        self.motor_control.start()
 
         # print('starting stepper thread')
 
