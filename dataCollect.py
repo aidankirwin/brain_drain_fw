@@ -95,25 +95,24 @@ class DataBuffer(threading.Thread):
     def read_channel(self, ch):
         # Small delay to allow conversion to settle
 
-        # Read voltage
-        voltage = np.array(self.ads.read(ch))
+        reading = np.array(self.ads.read(ch))
 
         # Calibration curves and filtering
         if ch == 0: # pressure
-            voltage = self.loaded_model['poly'].transform(
-                pd.DataFrame(voltage.reshape(-1, 1), columns=self.loaded_model['poly'].feature_names_in_)
+            reading = self.loaded_model['poly'].transform(
+                pd.DataFrame(reading.reshape(-1, 1), columns=self.loaded_model['poly'].feature_names_in_)
             )
-            voltage = self.loaded_model['quad_model'].predict(voltage)
+            reading = self.loaded_model['quad_model'].predict(reading)
 
         elif ch == 1 or ch == 3:    # load cell
             # Calibration
             scale = 0.32830703
             offset = -1634.5324180655623
-            voltage = voltage * scale + offset
+            reading = reading * scale + offset
 
         
         # Convert
-        return float(voltage[0]) * self.voltage_to_icp_factor
+        return reading
 
     def add_data(self, buffer, value):
         with self.lock:
