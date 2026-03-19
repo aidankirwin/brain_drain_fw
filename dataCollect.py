@@ -159,7 +159,7 @@ class DataBuffer(threading.Thread):
 
     def read_channel(self, ch):
         # reading = float(self.ads.read(ch))
-        reading = 12 + random.random(0, 2)
+        reading = 12 + random.randint(0, 5) / 10
         reading_arr = np.atleast_1d(reading)
 
         if ch == 0:  # pressure
