@@ -67,8 +67,12 @@ class DataBuffer(threading.Thread):
         # Timing
         self.period = 0.0033  # ~300 Hz total loop
 
+        # calibration models
         with open('model.pkl', 'rb') as handle:
             self.loaded_model = pickle.load(handle)
+
+        self.lc_scale = 0.32830703
+        self.lc_offset = -1634.5324180655623
 
         # Buffers
         self.max_length = 100
@@ -164,7 +168,7 @@ class DataBuffer(threading.Thread):
     def read_channel(self, ch):
         # Small delay to allow conversion to settle
 
-        reading = np.atleast_1d(self.ads.read(ch))
+        reading = self.ads.read(ch)
 
         # Calibration curves and filtering
         if ch == 0: # pressure
@@ -172,37 +176,34 @@ class DataBuffer(threading.Thread):
                 pd.DataFrame(reading.reshape(-1, 1), columns=self.loaded_model['poly'].feature_names_in_)
             )
             reading = self.loaded_model['quad_model'].predict(reading)
+            reading = [0]
 
             # filtering
             if self.z_pressure is None:
                 self.z_pressure = signal.sosfilt_zi(self.sos_pressure) * reading
-            reading, self.z_pressure = signal.sosfilt(self.sos_pressure, self.z_pressure)
+            reading, self.z_pressure = signal.sosfilt(self.sos_pressure, [reading], self.z_pressure)
             return reading[0]
 
         elif ch == 1:    # load cell 1
             # Calibration
-            scale = 0.32830703
-            offset = -1634.5324180655623
-            reading = reading * scale + offset
+            reading = reading * self.lc_scale + self.lc_offset
 
             # filtering
             if self.z_pressure is None:
                 self.z_pressure = signal.sosfilt_zi(self.sos_loadcell) * reading
-            reading, self.z_load1 = signal.sosfilt(self.sos_loadcell, self.z_load1)
+            reading, self.z_load1 = signal.sosfilt(self.sos_loadcell, [reading], self.z_load1)
 
             x = self.kf_1.update(reading)
             return x[0], x[1]   # return weight and flow estimates
 
         elif ch == 2:    # load cell 2
             # Calibration
-            scale = 0.32830703
-            offset = -1634.5324180655623
-            reading = reading * scale + offset
+            reading = reading * self.lc_scale + self.lc_offset
 
             # filtering
             if self.z_load2 is None:
                 self.z_load2 = signal.sosfilt_zi(self.sos_loadcell) * reading
-            reading, self.z_load2 = signal.sosfilt(self.sos_loadcell, self.z_load2)
+            reading, self.z_load2 = signal.sosfilt(self.sos_loadcell, [reading], self.z_load2)
 
             x = self.kf_1.update(reading)
             return x[0], x[1]   # return weight and flow estimates
