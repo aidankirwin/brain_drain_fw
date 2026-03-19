@@ -177,7 +177,7 @@ class DataBuffer(threading.Thread):
                 pd.DataFrame(reading.reshape(-1, 1), columns=self.loaded_model['poly'].feature_names_in_)
             )
             reading = self.loaded_model['quad_model'].predict(reading)
-            reading = [0]
+            reading = [0][0]
             print(reading)
 
             # filtering
