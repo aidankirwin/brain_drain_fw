@@ -26,45 +26,46 @@ class ICPWaveform(LayoutDesigns):
     # Make waveform scale with ICP values (5-25 mmHg mapped to canvas height)
     def draw_y_axis_scale(self, scaled_min, scaled_max):
 
-        if self.old_icp_max is None or scaled_max > self.old_icp_max + 2 or scaled_min < self.old_icp_min - 2:
-            self.y_axis_canvas.delete("y_axis")  # remove old scale
+        # if self.old_icp_max is None or scaled_max > self.old_icp_max + 2 or scaled_min < self.old_icp_min - 2:
+            
+        self.y_axis_canvas.delete("y_axis")  # remove old scale
 
-            # Define scale values across the visible range
-            icp_range = scaled_max - scaled_min
-            scale_values = [
-                scaled_min,
-                scaled_min + icp_range * 0.25,
-                scaled_min + icp_range * 0.5,
-                scaled_min + icp_range * 0.75,
-                scaled_max
-            ]
+        # Define scale values across the visible range
+        icp_range = scaled_max - scaled_min
+        scale_values = [
+            scaled_min,
+            scaled_min + icp_range * 0.25,
+            scaled_min + icp_range * 0.5,
+            scaled_min + icp_range * 0.75,
+            scaled_max
+        ]
 
-            for val in scale_values:
-                # Convert ICP value to Y coordinate using the same formula as the waveform
-                normalized = (val - scaled_min) / (scaled_max - scaled_min)
-                y = self.waveform_height - int(normalized * (self.waveform_height - 1))
+        for val in scale_values:
+            # Convert ICP value to Y coordinate using the same formula as the waveform
+            normalized = (val - scaled_min) / (scaled_max - scaled_min)
+            y = self.waveform_height - int(normalized * (self.waveform_height - 1))
 
-                # Draw tick mark at the right edge (flush against the waveform canvas)
-                self.y_axis_canvas.create_line(80, y, 90, y, fill="black", tags="y_axis")
+            # Draw tick mark at the right edge (flush against the waveform canvas)
+            self.y_axis_canvas.create_line(80, y, 90, y, fill="black", tags="y_axis")
 
-                # Draw label to the left of the tick mark
-                self.y_axis_canvas.create_text(
-                    76, y,
-                    text=f"{val:.1f}",
-                    anchor="e",
-                    font=("Helvetica", 12),
-                    fill="black",
-                    tags="y_axis"
-                )
+            # Draw label to the left of the tick mark
+            self.y_axis_canvas.create_text(
+                76, y,
+                text=f"{val:.1f}",
+                anchor="e",
+                font=("Helvetica", 12),
+                fill="black",
+                tags="y_axis"
+            )
 
-            # Draw the vertical axis line along the right edge of the y_axis canvas
-            self.y_axis_canvas.create_line(90, -10, 90, self.waveform_height, fill="black", width=2, tags="y_axis")
+        # Draw the vertical axis line along the right edge of the y_axis canvas
+        self.y_axis_canvas.create_line(90, -10, 90, self.waveform_height, fill="black", width=2, tags="y_axis")
         
-        else:
-            return  # No need to redraw if ICP range hasn't changed
+        # else:
+        #     return  # No need to redraw if ICP range hasn't changed
         
-        self.old_icp_min = scaled_min
-        self.old_icp_max = scaled_max
+        # self.old_icp_min = scaled_min
+        # self.old_icp_max = scaled_max
 
     def toggle_drainage(self, event=None):
         if self.is_draining:
