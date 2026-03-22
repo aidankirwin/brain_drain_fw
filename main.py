@@ -2,7 +2,7 @@ import tkinter as tk
 from app import App
 from test import test
 
-mode = 'DEMO'
+mode = 'TEST'
 
 if __name__ == "__main__":
     if mode == 'DEMO':
