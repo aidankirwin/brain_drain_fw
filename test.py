@@ -40,19 +40,19 @@ def gpio_test_loop():
 
             # --- Motor ON loop ---
             for i in range(2):
-                print("motor go go go")
+                print("dc motor start")
                 motor.value = 200/255.0  # Convert Arduino PWM (0–255) to 0–1
                 time.sleep(1)
 
             # --- Motor OFF loop ---
             for i in range(1):
-                print("motor stoooooop")
+                print("dc motor stop")
                 motor.value = 0
                 time.sleep(1)
 
             # --- Stepper pulse loop ---
             for i in range(100):
-                print("motor go go go")
+                print("stepper motor")
                 GPIO.output(step_pin, GPIO.HIGH)
                 time.sleep(0.005)
                 GPIO.output(step_pin, GPIO.LOW)
@@ -60,6 +60,7 @@ def gpio_test_loop():
 
             # --- Servo movement ---
             for i in range(2):
+                print('servo move')
                 servo.angle = 180
                 time.sleep(1)
                 servo.angle = 0
