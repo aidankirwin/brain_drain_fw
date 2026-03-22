@@ -4,27 +4,75 @@ import signal
 import threading
 import tkinter as tk
 
-from gpiozero import LED
-from gpiozero.pins.lgpio import LGPIOFactory
-
 from gpiozero import OutputDevice
 from time import sleep
 
+import time
+import RPi.GPIO as GPIO
+from gpiozero import PWMOutputDevice, AngularServo
+
 
 def gpio_test_loop():
-    STEP_PIN = 3  # BCM numbering
-    step = OutputDevice(STEP_PIN)
-    delay_time = 0.01  # 10 ms (same as Arduino)
+
+    # Use BCM pin numbering
+    GPIO.setmode(GPIO.BCM)
+
+    # Pin definitions
+    step_pin = 6
+    motor_pin = 13
+    servo_pin = 12
+
+    # Setup pins
+    GPIO.setup(step_pin, GPIO.OUT)
+
+    # PWM motor (equivalent to analogWrite)
+    motor = PWMOutputDevice(motor_pin)
+
+    # Servo setup
+    servo = AngularServo(servo_pin, min_angle=0, max_angle=180)
+    servo.detach()
+
+    # Delay settings
+    delay_time = 0.01  # 10 ms
 
     try:
         while True:
-            step.on()
-            sleep(0.005)   # HIGH pulse (5 ms)
-            step.off()
-            sleep(delay_time)
+
+            # --- Motor ON loop ---
+            for i in range(2):
+                print("motor go go go")
+                motor.value = 200/255.0  # Convert Arduino PWM (0–255) to 0–1
+                time.sleep(1)
+
+            # --- Motor OFF loop ---
+            for i in range(1):
+                print("motor stoooooop")
+                motor.value = 0
+                time.sleep(1)
+
+            # --- Stepper pulse loop ---
+            for i in range(100):
+                print("motor go go go")
+                GPIO.output(step_pin, GPIO.HIGH)
+                time.sleep(0.005)
+                GPIO.output(step_pin, GPIO.LOW)
+                time.sleep(delay_time)
+
+            # --- Servo movement ---
+            for i in range(2):
+                servo.angle = 180
+                time.sleep(1)
+                servo.angle = 0
+                time.sleep(1)
+
+            # Optional: "detach" equivalent (stop sending signal)
+            servo.detach()
 
     except KeyboardInterrupt:
-        print("Stopped")
+        print("Exiting...")
+
+    finally:
+        GPIO.cleanup()
 
 # TKINTER UI
 
@@ -33,7 +81,7 @@ class App:
         self.root = root
         self.root.update_idletasks()
         self.root.title("BrainDrain Hardware Test")
-        self.root.attributes("-fullscreen", True)
+        # self.root.attributes("-fullscreen", True)
 
         # Main frame
         frame = tk.Frame(root)
