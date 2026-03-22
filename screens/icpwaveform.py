@@ -253,20 +253,20 @@ class ICPWaveform(LayoutDesigns):
             grid_container_2,
             bg="white",
             width=90,
-            height=350
+            height=550
         )
         self.y_axis_canvas.pack(side="left", padx=(1, 0), pady=1)
 
         self.waveform = tk.Canvas(
             grid_container_2,
             bg="white",
-            height=350
+            height=550
         )
         self.waveform.pack(side="left", fill="both", expand=True, padx=(0, 1), pady=1)
 
         # For waveform drawing
         self.waveform_width = 575
-        self.waveform_height = 300
+        self.waveform_height = 500
         self.waveform_buffer = [20] * self.waveform_width  # Start with midline
 
         # --- BOTTOM BUTTONS ---
