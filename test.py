@@ -30,7 +30,7 @@ def gpio_test_loop():
 
     # Servo setup
     servo = AngularServo(servo_pin, min_angle=0, max_angle=180)
-    # servo.detach()
+    servo.detach()
 
     # Delay settings
     delay_time = 0.01  # 10 ms
@@ -61,9 +61,9 @@ def gpio_test_loop():
             # --- Servo movement ---
             for i in range(2):
                 servo.angle = 180
-                time.sleep(2)
+                time.sleep(1)
                 servo.angle = 0
-                time.sleep(2)
+                time.sleep(1)
 
             # Optional: "detach" equivalent (stop sending signal)
             servo.detach()
