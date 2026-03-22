@@ -9,7 +9,7 @@ class App:
     def __init__(self, root):
 
         # Initial target ICP value
-        self.target_icp = 15
+        self.target_icp = 12
         # Initial drainage state — True to match GUI button showing "Stop Drainage" on load
         self.is_draining = True
 
@@ -68,12 +68,12 @@ class App:
 
     def update_target_icp(self, new_value):
         """Update the target ICP value in MotorControl from GUI."""
-        # self.target_icp = new_value
+        self.target_icp = new_value
         self.motor_control.update_target_icp(new_value)
 
     def fetch_drainage_state(self, is_draining):
         """Update the drainage state in MotorControl from GUI."""
-        # self.is_draining = is_draining
+        self.is_draining = is_draining
         self.motor_control.fetch_drainage_state(is_draining)
 
     def irrigate(self):
