@@ -161,6 +161,7 @@ class DataBuffer(threading.Thread):
         reading = float(self.ads.read(ch))
 
         if ch == 0:  # pressure
+            reading_arr = np.atleast_1d(reading)
             reading_df = pd.DataFrame(
                 reading_arr.reshape(-1, 1),
                 columns=self.loaded_model['poly'].feature_names_in_
@@ -177,7 +178,7 @@ class DataBuffer(threading.Thread):
             return reading_arr[0]
 
         elif ch == 1:  # load cell 1
-            reading_arr = np.atleast_1d(5250)
+            reading_arr = np.atleast_1d(reading)
             reading_arr = reading_arr * self.lc_scale + self.lc_offset
 
             # if self.z_load1 is None:
@@ -194,6 +195,7 @@ class DataBuffer(threading.Thread):
             return x[0], x[1]
 
         elif ch == 2:  # load cell 2
+            reading_arr = np.atleast_1d(reading)
             reading_arr = reading_arr * self.lc_scale + self.lc_offset
 
             # if self.z_load2 is None:
