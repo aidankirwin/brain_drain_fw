@@ -265,7 +265,7 @@ class ICPWaveform(LayoutDesigns):
         self.waveform.pack(side="left", fill="both", expand=True, padx=(0, 1), pady=1)
 
         # For waveform drawing
-        self.waveform_width = 600
+        self.waveform_width = 500
         self.waveform_height = 300
         self.waveform_buffer = [20] * self.waveform_width  # Start with midline
 
