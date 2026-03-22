@@ -125,7 +125,6 @@ class DataBuffer(threading.Thread):
         next_time = time.perf_counter()
 
         while self.running:
-            time.sleep(0.1)
             loop_start = time.perf_counter()
 
             for ch in self.channels:
