@@ -51,7 +51,7 @@ def gpio_test_loop():
                 time.sleep(1)
 
             # --- Stepper pulse loop ---
-            for i in range(1000):
+            for i in range(100):
                 print("motor go go go")
                 GPIO.output(step_pin, GPIO.HIGH)
                 time.sleep(0.005)
