@@ -23,7 +23,7 @@ def gpio_test_loop():
     servo_pin = 12
 
     # Setup pins
-    # GPIO.setup(step_pin, GPIO.OUT)
+    GPIO.setup(step_pin, GPIO.OUT)
 
     # PWM motor (equivalent to analogWrite)
     motor = PWMOutputDevice(motor_pin)
