@@ -61,17 +61,17 @@ def gpio_test_loop():
                 time.sleep(delay_time)
 
             # --- Servo movement ---
-            # time.sleep(2)
-            # for i in range(2):
-            #     print('servo move')
-            #     servo.angle = -90
-            #     time.sleep(2)
-            #     servo.angle = 90
-            #     time.sleep(2)
+            time.sleep(2)
+            for i in range(2):
+                print('servo move')
+                servo.angle = -90
+                time.sleep(2)
+                servo.angle = 90
+                time.sleep(2)
 
-            # # Optional: "detach" equivalent (stop sending signal)
-            # servo.detach()
-            # time.sleep(4)
+            # Optional: "detach" equivalent (stop sending signal)
+            servo.detach()
+            time.sleep(4)
 
     except KeyboardInterrupt:
         print("Exiting...")
