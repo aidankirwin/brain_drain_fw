@@ -10,13 +10,12 @@ from time import sleep
 import time
 import RPi.GPIO as GPIO
 from gpiozero import PWMOutputDevice, AngularServo
-from gpiozero.pins.pigpio import PiGPIOFactory
+
 
 def gpio_test_loop():
 
     # Use BCM pin numbering
     GPIO.setmode(GPIO.BCM)
-    factory = PiGPIOFactory()
 
     # Pin definitions
     step_pin = 6
@@ -27,10 +26,10 @@ def gpio_test_loop():
     # GPIO.setup(step_pin, GPIO.OUT)
 
     # PWM motor (equivalent to analogWrite)
-    motor = PWMOutputDevice(motor_pin, pin_factory=factory)
+    motor = PWMOutputDevice(motor_pin)
 
     # Servo setup
-    servo = AngularServo(servo_pin, pin_factory=factory)
+    servo = AngularServo(servo_pin)
     servo.detach()
 
     # Delay settings
