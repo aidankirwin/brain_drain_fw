@@ -53,22 +53,20 @@ def gpio_test_loop():
             time.sleep(2)
 
             # --- Stepper pulse loop ---
-            GPIO.setup(step_pin, GPIO.OUT)
             for i in range(100):
                 print("stepper motor")
                 GPIO.output(step_pin, GPIO.HIGH)
                 time.sleep(0.005)
                 GPIO.output(step_pin, GPIO.LOW)
                 time.sleep(delay_time)
-            GPIO.cleanup(step_pin)
 
             # --- Servo movement ---
             time.sleep(2)
-            for i in range(4):
+            for i in range(2):
                 print('servo move')
-                servo.angle = 0
+                servo.angle = -30
                 time.sleep(2)
-                servo.angle = 180
+                servo.angle = 200
                 time.sleep(2)
 
             # Optional: "detach" equivalent (stop sending signal)
