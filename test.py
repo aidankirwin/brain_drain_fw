@@ -29,7 +29,7 @@ def gpio_test_loop():
     motor = PWMOutputDevice(motor_pin)
 
     # Servo setup
-    servo = AngularServo(servo_pin, min_angle=0, max_angle=180)
+    servo = AngularServo(servo_pin, min_angle=0, max_angle=200)
     servo.detach()
 
     # Delay settings
