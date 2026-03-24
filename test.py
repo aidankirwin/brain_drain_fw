@@ -65,9 +65,9 @@ def gpio_test_loop():
             for i in range(2):
                 print('servo move')
                 servo.angle = 0
-                time.sleep(2)
+                time.sleep(4)
                 servo.angle = 180
-                time.sleep(2)
+                time.sleep(4)
 
             # Optional: "detach" equivalent (stop sending signal)
             servo.detach()
