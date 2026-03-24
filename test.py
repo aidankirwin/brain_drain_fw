@@ -68,6 +68,7 @@ def gpio_test_loop():
 
             # Optional: "detach" equivalent (stop sending signal)
             servo.detach()
+            time.sleep(1)
 
     except KeyboardInterrupt:
         print("Exiting...")
