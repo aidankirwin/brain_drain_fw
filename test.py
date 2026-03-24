@@ -50,6 +50,8 @@ def gpio_test_loop():
                 motor.value = 0
                 time.sleep(1)
 
+            time.sleep(2)
+
             # --- Stepper pulse loop ---
             for i in range(100):
                 print("stepper motor")
