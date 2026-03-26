@@ -21,6 +21,7 @@ class MotorControl(threading.Thread):
         self.servo.detach()
 
         self.motor = PWMOutputDevice(self.motor_pin)
+        self.delay_time = None
 
     def run(self):
         while self.running:
