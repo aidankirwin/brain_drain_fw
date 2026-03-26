@@ -17,7 +17,7 @@ class MotorControl(threading.Thread):
         self.motor_pin = 13
         self.servo_pin = 12
 
-        self.servo = AngularServo(self.servo_pin, min_angle=0, max_angle=180, min_pulse_width=0.0005, max_pulse_width=0.0025)
+        self.servo = AngularServo(self.servo_pin, min_angle=0, max_angle=180, min_pulse_width=0.0007, max_pulse_width=0.002)
         self.servo.detach()
 
         self.motor = PWMOutputDevice(self.motor_pin)
@@ -72,7 +72,8 @@ class MotorControl(threading.Thread):
     def irrigate(self):
         print('irrigating')
         self.servo.angle = 180
-        time.sleep(2)
+        time.sleep(3)
+        self.servo.detach()
 
         for i in range(2):
                 print("motor go")
@@ -86,7 +87,7 @@ class MotorControl(threading.Thread):
             time.sleep(1)
 
         self.servo.angle = 0
-        time.sleep(2)
+        time.sleep(3)
 
         self.servo.detach()
     
