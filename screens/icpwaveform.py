@@ -167,9 +167,6 @@ class ICPWaveform(LayoutDesigns):
                 widget.insert(tk.END, val, ("big_font", "val"))
         
         widget.configure(state=tk.DISABLED)
-    
-    def update_current_volume(self):
-        self.waveform.after(30, self.update_waveform)
 
     def dismiss_numpad(self, event=None):
     # Only hide if the click wasn't inside the numpad itself
@@ -298,12 +295,28 @@ class ICPWaveform(LayoutDesigns):
 
         # Start waveform update loop
         self.update_waveform()
+        self.update_current_volume()
+
+    def update_current_volume(self):
+        display_batch_vd = self.data_buffer.fetch_buffer('load1', 'display')
+        if display_batch_vd is not None:
+            # update the "current volume" text
+            self.vdbag.configure(state=tk.NORMAL)
+            self.vdbagnum.configure(state=tk.NORMAL)
+            self.vdbag.delete("1.0", tk.END)
+            self.vdbagnum.delete("1.0", tk.END)
+            self.vdbag.insert(tk.END, "\nVolume in \nDrainage Bag:\n", "normal_font")
+            self.vdbagnum.insert(tk.END, "\n", "small_font")
+            self.vdbagnum.insert(tk.END, f"{sum(display_batch_vd) / len(display_batch_vd) :.1f}", "big_font")
+            self.vdbagnum.insert(tk.END, "ml", "normal_font")
+            self.vdbagnum.configure(state=tk.DISABLED)
+            self.vdbag.configure(state=tk.DISABLED)
+
+        self.vdbag.after(30, self.update_current_volume)
 
     def update_waveform(self):
-        
         # Try to get a batch of N new points
         display_batch_icp = self.data_buffer.fetch_buffer('icp', 'display')
-        display_batch_vd = self.data_buffer.fetch_buffer('load1', 'display')
         
         # If not enough new data yet, skip drawing
         if display_batch_icp is None:
@@ -318,19 +331,6 @@ class ICPWaveform(LayoutDesigns):
         self.current_icp.insert(tk.END, f"{sum(display_batch_icp) / len(display_batch_icp) :.1f}", "big_font")
         self.current_icp.insert(tk.END, "mmHg\n", "small_font")
         self.current_icp.config(state=tk.DISABLED)
-
-        if display_batch_vd is not None:
-            # update the "current volume" text
-            self.vdbag.configure(state=tk.NORMAL)
-            self.vdbagnum.configure(state=tk.NORMAL)
-            self.vdbag.delete("1.0", tk.END)
-            self.vdbagnum.delete("1.0", tk.END)
-            self.vdbag.insert(tk.END, "\nVolume in \nDrainage Bag:\n", "normal_font")
-            self.vdbagnum.insert(tk.END, "\n", "small_font")
-            self.vdbagnum.insert(tk.END, f"{sum(display_batch_vd) / len(display_batch_vd) :.1f}", "big_font")
-            self.vdbagnum.insert(tk.END, "ml", "normal_font")
-            self.vdbagnum.configure(state=tk.DISABLED)
-            self.vdbag.configure(state=tk.DISABLED)
         
         # Append new points into the sliding waveform window
         for icp_val in display_batch_icp:

@@ -74,6 +74,8 @@ class DataBuffer(threading.Thread):
 
         self.lc_scale = 0.32830703
         self.lc_offset = -1634.5324180655623
+        self.load1_tare = None
+        self.load2_tare = None
 
         # Buffer config
         self.max_length = 10
