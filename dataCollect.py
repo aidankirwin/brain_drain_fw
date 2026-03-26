@@ -132,6 +132,7 @@ class DataBuffer(threading.Thread):
 
             for ch in self.channels:
                 value = self.read_channel(ch)
+                time.sleep(0.001)  # 1 ms settling
 
                 if ch == 0:
                     self.add_data("icp", "display", value)
