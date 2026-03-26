@@ -79,7 +79,7 @@ class DataBuffer(threading.Thread):
         self.load2_tare = None
 
         # Buffer config
-        self.max_length = 20
+        self.max_length = 50
 
         self.buffers = {
             "icp": {
