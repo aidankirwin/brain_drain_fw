@@ -194,12 +194,12 @@ class DataBuffer(threading.Thread):
             if self.load1_tare is not None:
                 reading_arr = reading_arr - self.load1_tare
 
-            # if self.z_load1 is None:
-            #     self.z_load1 = signal.sosfilt_zi(self.sos_loadcell) * reading_arr
+            if self.z_load1 is None:
+                self.z_load1 = signal.sosfilt_zi(self.sos_loadcell) * reading_arr
 
-            # reading_arr, self.z_load1 = signal.sosfilt(
-            #     self.sos_loadcell, reading_arr, zi=self.z_load1
-            # )
+            reading_arr, self.z_load1 = signal.sosfilt(
+                self.sos_loadcell, reading_arr, zi=self.z_load1
+            )
 
             # x = self.kf_1.update(reading_arr[0])
             x = [0,0]
@@ -215,12 +215,12 @@ class DataBuffer(threading.Thread):
             if self.load2_tare is not None:
                 reading_arr = reading_arr - self.load2_tare
 
-            # if self.z_load2 is None:
-            #     self.z_load2 = signal.sosfilt_zi(self.sos_loadcell) * reading_arr
+            if self.z_load2 is None:
+                self.z_load2 = signal.sosfilt_zi(self.sos_loadcell) * reading_arr
 
-            # reading_arr, self.z_load2 = signal.sosfilt(
-            #     self.sos_loadcell, reading_arr, zi=self.z_load2
-            # )
+            reading_arr, self.z_load2 = signal.sosfilt(
+                self.sos_loadcell, reading_arr, zi=self.z_load2
+            )
 
             # x = self.kf_2.update(reading_arr[0])
             # return x[0], x[1]
