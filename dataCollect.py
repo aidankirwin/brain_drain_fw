@@ -108,7 +108,7 @@ class DataBuffer(threading.Thread):
         self.z_load2 = None
 
         # Kalman filters
-        process_var = 1e-6
+        process_var = 1e-2
         meas_var = 38791215.89354596
 
         self.kf_1 = KalmanVolumeFlow(1/100, process_var, meas_var)
@@ -194,7 +194,7 @@ class DataBuffer(threading.Thread):
             reading_arr = reading_arr * self.lc_scale + self.lc_offset
 
             if self.load1_tare is not None:
-                reading_arr = reading_arr - self.load1_tare
+                reading_arr = reading_arr - self.load1_tare + 20.0
                 reading_arr = np.atleast_1d(np.max([0.0, reading_arr[0]]))
 
             if self.z_load1 is None:
@@ -219,7 +219,7 @@ class DataBuffer(threading.Thread):
             reading_arr = reading_arr * self.lc_scale + self.lc_offset
 
             if self.load2_tare is not None:
-                reading_arr = reading_arr - self.load2_tare
+                reading_arr = reading_arr - self.load2_tare + 20.0
                 reading_arr = np.atleast_1d(np.max([0.0, reading_arr[0]]))
 
             if self.z_load2 is None:
