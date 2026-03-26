@@ -3,6 +3,7 @@ import time
 import board
 import busio
 import adafruit_ads1x15.ads1115 as ADS
+from adafruit_ads1x15.analog_in import AnalogIn
 import numpy as np
 import pandas as pd
 from scipy import signal
@@ -162,11 +163,9 @@ class DataBuffer(threading.Thread):
                 next_time = time.perf_counter()
 
     def read_channel(self, ch):
-        reading = float(self.ads.read(ch))
-        noise_ref = float(self.ads.read(3))
-        reading = reading - noise_ref
 
         if ch == 0:  # pressure
+            reading = float(AnalogIn(self.ads, ADS.P0))
             reading_arr = np.atleast_1d(reading)
             reading_df = pd.DataFrame(
                 reading_arr.reshape(-1, 1),
@@ -184,6 +183,7 @@ class DataBuffer(threading.Thread):
             return reading_arr[0]
 
         elif ch == 1:  # load cell 1
+            reading = float(AnalogIn(self.ads, ADS.P1))
             reading_arr = np.atleast_1d(reading)
             reading_arr = reading_arr * self.lc_scale + self.lc_offset
 
@@ -204,6 +204,7 @@ class DataBuffer(threading.Thread):
             return x[0], x[1]
 
         elif ch == 2:  # load cell 2
+            reading = float(AnalogIn(self.ads, ADS.P2))
             reading_arr = np.atleast_1d(reading)
             reading_arr = reading_arr * self.lc_scale + self.lc_offset
 
