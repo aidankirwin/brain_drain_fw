@@ -147,7 +147,7 @@ class DataBuffer(threading.Thread):
                     self.add_data("load2", "flow", value[1])
 
             loop_end = time.perf_counter()
-            print(f"Loop period: {loop_end - loop_start:.6f}s")
+            # print(f"Loop period: {loop_end - loop_start:.6f}s")
 
             # Timing control
             next_time += self.period
@@ -182,6 +182,9 @@ class DataBuffer(threading.Thread):
             reading_arr = np.atleast_1d(reading)
             reading_arr = reading_arr * self.lc_scale + self.lc_offset
 
+            if self.load1_tare is not None:
+                reading_arr = reading_arr - self.load1_tare
+
             # if self.z_load1 is None:
             #     self.z_load1 = signal.sosfilt_zi(self.sos_loadcell) * reading_arr
 
@@ -198,6 +201,9 @@ class DataBuffer(threading.Thread):
         elif ch == 2:  # load cell 2
             reading_arr = np.atleast_1d(reading)
             reading_arr = reading_arr * self.lc_scale + self.lc_offset
+
+            if self.load2_tare is not None:
+                reading_arr = reading_arr - self.load2_tare
 
             # if self.z_load2 is None:
             #     self.z_load2 = signal.sosfilt_zi(self.sos_loadcell) * reading_arr
@@ -227,6 +233,15 @@ class DataBuffer(threading.Thread):
             if len(buf) >= self.max_length:
                 batch = copy.copy(buf)
                 buf.clear()
+
+                if sensor == 'load1' and self.load1_tare is None:
+                    self.load1_tare = np.mean(batch)
+                    return None
+                
+                if sensor == 'load2' and self.load2_tare is None:
+                    self.load2_tare = np.mean(batch)
+                    return None
+
                 return batch
 
             return None
