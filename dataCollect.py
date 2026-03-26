@@ -252,16 +252,23 @@ class DataBuffer(threading.Thread):
                 if sensor == 'icp' and time.time() - self.start_time < 4:
                     return None
 
-                if sensor == 'load1' and self.load1_tare is None:
-                    if time.time() - self.start_time > 10:
+                if sensor == 'load1':
+                    if self.load1_tare is None:
                         print('Tared load cell 1')
                         self.load1_tare = np.mean(batch)
-                    return None
+                        return None
                 
-                if sensor == 'load2' and self.load2_tare is None:
-                    print('Tared load cell 2')
-                    self.load2_tare = np.mean(batch)
-                    return None
+                    if time.time() - self.start_time < 4:
+                        return None
+                
+                if sensor == 'load2':
+                    if self.load2_tare is None:
+                        print('Tared load cell 2')
+                        self.load2_tare = np.mean(batch)
+                        return None
+                
+                    if time.time() - self.start_time < 4:
+                        return None
 
                 return batch
 
