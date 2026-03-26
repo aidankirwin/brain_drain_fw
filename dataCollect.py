@@ -100,7 +100,7 @@ class DataBuffer(threading.Thread):
 
         # Filters
         self.fs = 30
-        self.sos_pressure = signal.butter(4, 14, btype='low', output='sos', fs=self.fs)
+        self.sos_pressure = signal.butter(4, 5, btype='low', output='sos', fs=self.fs)
         self.sos_loadcell = signal.butter(4, 0.5, btype='low', output='sos', fs=self.fs)
 
         self.z_pressure = None
@@ -118,7 +118,7 @@ class DataBuffer(threading.Thread):
         self.i2c = busio.I2C(board.SCL, board.SDA)
         self.ads = ADS.ADS1115(self.i2c)
         self.ads.mode = ads1x15.Mode.SINGLE
-        self.ads.data_rate = 128
+        self.ads.data_rate = 250
 
         # Thread safety
         self.lock = threading.Lock()
@@ -245,10 +245,12 @@ class DataBuffer(threading.Thread):
                 buf.clear()
 
                 if sensor == 'load1' and self.load1_tare is None:
+                    print('Tared load cell 1')
                     self.load1_tare = np.mean(batch)
                     return None
                 
                 if sensor == 'load2' and self.load2_tare is None:
+                    print('Tared load cell 2')
                     self.load2_tare = np.mean(batch)
                     return None
 
