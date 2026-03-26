@@ -123,7 +123,7 @@ class DataBuffer(threading.Thread):
         self.lock = threading.Lock()
 
         # Channels
-        self.channels = [0, 1, 2]
+        self.channels = [0]
         # self.channels = [0]
 
     def run(self):
