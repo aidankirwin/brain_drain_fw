@@ -116,7 +116,7 @@ class DataBuffer(threading.Thread):
         # I2C + ADC
         self.i2c = busio.I2C(board.SCL, board.SDA)
         self.ads = ADS.ADS1115(self.i2c)
-        self.ads.data_rate = 128
+        self.ads.data_rate = 64
 
         # Thread safety
         self.lock = threading.Lock()
@@ -132,7 +132,6 @@ class DataBuffer(threading.Thread):
 
             for ch in self.channels:
                 value = self.read_channel(ch)
-                time.sleep(0.001)  # 1 ms settling
 
                 if ch == 0:
                     self.add_data("icp", "display", value)
@@ -165,6 +164,7 @@ class DataBuffer(threading.Thread):
     def read_channel(self, ch):
         # dummy read (flush old channel)
         _ = float(self.ads.read(ch))
+        time.sleep(0.001)
 
         # real read
         reading = float(self.ads.read(ch))
