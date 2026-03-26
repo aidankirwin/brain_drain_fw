@@ -108,8 +108,8 @@ class DataBuffer(threading.Thread):
         self.z_load2 = None
 
         # Kalman filters
-        process_var = 1e-1
-        meas_var = 38791215.89354596 / 10
+        process_var = 1e-5
+        meas_var = 38791215.89354596
 
         self.kf_1 = KalmanVolumeFlow(1/self.fs, process_var, meas_var)
         self.kf_2 = KalmanVolumeFlow(1/self.fs, process_var, meas_var)
@@ -197,20 +197,20 @@ class DataBuffer(threading.Thread):
                 reading_arr = reading_arr - self.load1_tare + 21.6
                 reading_arr = np.atleast_1d(np.max([0.0, reading_arr[0]]))
 
-            # if self.z_load1 is None:
-            #     self.z_load1 = signal.sosfilt_zi(self.sos_loadcell) * reading_arr
+            if self.z_load1 is None:
+                self.z_load1 = signal.sosfilt_zi(self.sos_loadcell) * reading_arr
 
-            # reading_arr, self.z_load1 = signal.sosfilt(
-            #     self.sos_loadcell, reading_arr, zi=self.z_load1
-            # )
+            reading_arr, self.z_load1 = signal.sosfilt(
+                self.sos_loadcell, reading_arr, zi=self.z_load1
+            )
 
-            # if time.time() - self.start_time > 5:
-            #     x = self.kf_1.update(reading_arr[0])
-            # else:
-            x = [0,0]
-            x[0] = reading_arr[0]
-            print(x[0])
-            x[1] = 1
+            if time.time() - self.start_time > 5:
+                x = self.kf_1.update(reading_arr[0])
+            else:
+                x = [0,0]
+                x[0] = reading_arr[0]
+                print(x[0])
+                x[1] = 1
             return x[0], x[1]
 
         elif ch == 2:  # load cell 2
