@@ -258,7 +258,7 @@ class DataBuffer(threading.Thread):
                         self.load1_tare = np.mean(batch)
                         return None
                 
-                    if time.time() - self.start_time < 4:
+                    if time.time() - self.start_time < 5:
                         return None
                 
                 if sensor == 'load2':
