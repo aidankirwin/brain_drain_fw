@@ -7,12 +7,28 @@ import tkinter as tk
 from gpiozero import OutputDevice
 from time import sleep
 
+import adafruit_ads1x15.ads1115 as ADS
+import board
+import busio
+
 import time
 import RPi.GPIO as GPIO
 from gpiozero import PWMOutputDevice, AngularServo
 
+import pickle
 
-def gpio_test_loop():
+def sensor_test_loop():
+    period = 0.0033  # ~300 Hz
+    lc_scale = 0.32830703
+    lc_offset = -1634.5324180655623
+    with open('model.pkl', 'rb') as handle:
+            loaded_model = pickle.load(handle)
+
+    i2c = busio.I2C(board.SCL, board.SDA)
+    ads = ADS.ADS1115(i2c)
+    ads.data_rate = 860
+
+def motor_test_loop():
 
     # Use BCM pin numbering
     GPIO.setmode(GPIO.BCM)
@@ -146,12 +162,15 @@ signal.signal(signal.SIGINT, cleanup)
 
 # MAIN ENTRY
 
-def test():
+def test(test_type='MOTOR_TEST'):
     print("Brain Drain starting with motor...")
 
-    # Start GPIO test thread
-    thread = threading.Thread(target=gpio_test_loop, daemon=True)
-    thread.start()
+    if test_type == 'MOTOR_TEST':
+        thread = threading.Thread(target=motor_test_loop, daemon=True)
+        thread.start()
+    elif test_type == 'SENSOR_TEST':
+        thread = threading.Thread(target=motor_test_loop, daemon=True)
+        thread.start()
 
     # Start Tkinter UI
     root = tk.Tk()

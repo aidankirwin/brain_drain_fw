@@ -2,7 +2,8 @@ import tkinter as tk
 from app import App
 from test import test
 
-mode = 'TEST'
+mode = 'DEMO'
+# DEMO, MOTOR_TEST, SENSOR_TEST
 
 if __name__ == "__main__":
     if mode == 'DEMO':
@@ -10,5 +11,5 @@ if __name__ == "__main__":
         app = App(root)
         root.mainloop()
         
-    elif mode == 'TEST':
-        test()
+    else:
+        test(test_type=mode)
