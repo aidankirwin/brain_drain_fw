@@ -111,8 +111,8 @@ class DataBuffer(threading.Thread):
         process_var = 1e-6
         meas_var = 38791215.89354596
 
-        # self.kf_1 = KalmanVolumeFlow(1/100, process_var, meas_var)
-        # self.kf_2 = KalmanVolumeFlow(1/100, process_var, meas_var)
+        self.kf_1 = KalmanVolumeFlow(1/100, process_var, meas_var)
+        self.kf_2 = KalmanVolumeFlow(1/100, process_var, meas_var)
 
         # I2C + ADC
         self.i2c = busio.I2C(board.SCL, board.SDA)
@@ -201,11 +201,12 @@ class DataBuffer(threading.Thread):
                 self.sos_loadcell, reading_arr, zi=self.z_load1
             )
 
-            # x = self.kf_1.update(reading_arr[0])
-            x = [0,0]
-            x[0] = reading_arr[0]
-            x[1] = 1
+            x = self.kf_1.update(reading_arr[0])
             return x[0], x[1]
+            # x = [0,0]
+            # x[0] = reading_arr[0]
+            # x[1] = 1
+            # return x[0], x[1]
 
         elif ch == 2:  # load cell 2
             reading = float(AnalogIn(self.ads, ads1x15.Pin.A2).value)
@@ -222,12 +223,12 @@ class DataBuffer(threading.Thread):
                 self.sos_loadcell, reading_arr, zi=self.z_load2
             )
 
-            # x = self.kf_2.update(reading_arr[0])
-            # return x[0], x[1]
-            x = [0,0]
-            x[0] = reading_arr[0]
-            x[1] = 1
+            x = self.kf_2.update(reading_arr[0])
             return x[0], x[1]
+            # x = [0,0]
+            # x[0] = reading_arr[0]
+            # x[1] = 1
+            # return x[0], x[1]
 
     def add_data(self, sensor, stream, value):
         with self.lock:
