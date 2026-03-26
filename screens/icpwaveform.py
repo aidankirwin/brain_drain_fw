@@ -312,7 +312,7 @@ class ICPWaveform(LayoutDesigns):
             self.vdbagnum.configure(state=tk.DISABLED)
             self.vdbag.configure(state=tk.DISABLED)
 
-        self.vdbag.after(30, self.update_current_volume)
+        self.waveform.after(30, self.update_current_volume)
 
     def update_waveform(self):
         # Try to get a batch of N new points
