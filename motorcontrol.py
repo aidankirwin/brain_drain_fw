@@ -7,7 +7,7 @@ from gpiozero import PWMOutputDevice, AngularServo
 class MotorControl(threading.Thread):
     def __init__(self, data_buffer, target_icp, is_draining):
         super().__init__(daemon=True)  # Daemon thread to run in background
-        self.interval = 10  # 1 Hz update rate timer
+        self.interval = 0.1  # 1 Hz update rate timer
         self.data_buffer = data_buffer
         self.running = True
         self.target_icp = target_icp  # Target ICP value for control logic
