@@ -91,7 +91,8 @@ class LayoutDesigns(tk.Frame):
         borderwidth=0.5,
         highlightbackground="blue",
         highlightthickness=1
-    )
+        )
+        
         # place it at the far right (relx=0.95) and middle vertically (rely=0.5)
         self.irrigate_btn.place(relx=0.95, rely=0.6, anchor="e")
         self.irrigate_btn.bind("<Button-1>", self.irrigate_activate)
