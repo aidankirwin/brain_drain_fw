@@ -84,7 +84,7 @@ class MotorControl(threading.Thread):
         time.sleep(0.5)
         self.servo.detach()
 
-        for i in range(2):
+        for i in range(8):
                 print("motor go")
                 self.motor.value = 200/255.0  # Convert Arduino PWM (0–255) to 0–1
                 time.sleep(1)
