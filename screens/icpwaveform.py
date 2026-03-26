@@ -298,7 +298,7 @@ class ICPWaveform(LayoutDesigns):
         self.update_current_volume()
 
     def update_current_volume(self):
-        display_batch_vd = self.data_buffer.fetch_buffer('load1', 'display')
+        display_batch_vd = self.data_buffer.fetch_buffer('load2', 'display')
         if display_batch_vd is not None:
             # update the "current volume" text
             self.vdbag.configure(state=tk.NORMAL)
@@ -312,7 +312,7 @@ class ICPWaveform(LayoutDesigns):
             self.vdbagnum.configure(state=tk.DISABLED)
             self.vdbag.configure(state=tk.DISABLED)
 
-        self.waveform.after(30, self.update_current_volume)
+        self.waveform.after(10, self.update_current_volume)
 
     def update_waveform(self):
         # Try to get a batch of N new points
