@@ -19,7 +19,7 @@ class MotorControl(threading.Thread):
 
         self.servo = AngularServo(self.servo_pin, min_angle=0, max_angle=180, min_pulse_width=0.0005, max_pulse_width=0.0025)
         time.sleep(2)
-        self.servo.angle = 0
+        self.servo.angle = 45
         time.sleep(2)
         self.servo.detach()
         
@@ -76,7 +76,7 @@ class MotorControl(threading.Thread):
 
     def irrigate(self):
         print('irrigating')
-        self.servo.angle = 180
+        self.servo.angle = 135
         time.sleep(2)
         self.servo.detach()
 
@@ -91,7 +91,7 @@ class MotorControl(threading.Thread):
             self.motor.value = 0
             time.sleep(1)
 
-        self.servo.angle = 0
+        self.servo.angle = 45
         time.sleep(2)
         self.servo.detach()
     
