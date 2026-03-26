@@ -194,7 +194,7 @@ class ICPWaveform(LayoutDesigns):
         
         self.current_icp.insert(tk.END, "\n", "small_font")
         self.current_icp.insert(tk.END, "Current ICP:\n", "normal_font")
-        self.current_icp.insert(tk.END, "10", "big_font")
+        self.current_icp.insert(tk.END, "--", "big_font")
         self.current_icp.insert(tk.END, "mmHg\n", "small_font")
         
         self.current_icp.configure(state=tk.DISABLED)
@@ -238,7 +238,7 @@ class ICPWaveform(LayoutDesigns):
 
         self.vdbagnum.insert(tk.END, "\n", "small_font")
         
-        self.vdbagnum.insert(tk.END, "150", "big_font")
+        self.vdbagnum.insert(tk.END, "--", "big_font")
         self.vdbagnum.insert(tk.END, "ml", "normal_font")
         self.vdbagnum.configure(state=tk.DISABLED)
 
@@ -298,7 +298,7 @@ class ICPWaveform(LayoutDesigns):
         self.update_current_volume()
 
     def update_current_volume(self):
-        display_batch_vd = self.data_buffer.fetch_buffer('icp', 'display')
+        display_batch_vd = self.data_buffer.fetch_buffer('load1', 'display')
         if display_batch_vd is not None:
             # update the "current volume" text
             self.vdbag.configure(state=tk.NORMAL)
@@ -316,7 +316,7 @@ class ICPWaveform(LayoutDesigns):
 
     def update_waveform(self):
         # Try to get a batch of N new points
-        display_batch_icp = self.data_buffer.fetch_buffer('load1', 'display')
+        display_batch_icp = self.data_buffer.fetch_buffer('icp', 'display')
         
         # If not enough new data yet, skip drawing
         if display_batch_icp is None:

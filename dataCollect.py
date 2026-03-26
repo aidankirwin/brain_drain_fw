@@ -127,6 +127,8 @@ class DataBuffer(threading.Thread):
         self.channels = [0, 1, 2]
         # self.channels = [0]
 
+        self.start_time = time.time()
+
     def run(self):
         next_time = time.perf_counter()
 
@@ -245,8 +247,9 @@ class DataBuffer(threading.Thread):
                 buf.clear()
 
                 if sensor == 'load1' and self.load1_tare is None:
-                    print('Tared load cell 1')
-                    self.load1_tare = np.mean(batch)
+                    if time.time() - self.start_time > 4:
+                        print('Tared load cell 1')
+                        self.load1_tare = np.mean(batch)
                     return None
                 
                 if sensor == 'load2' and self.load2_tare is None:
