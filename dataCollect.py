@@ -122,7 +122,7 @@ class DataBuffer(threading.Thread):
 
         # Channels
         # self.channels = [0, 1, 2]
-        self.channels = [2]
+        self.channels = [0]
 
     def run(self):
         next_time = time.perf_counter()
