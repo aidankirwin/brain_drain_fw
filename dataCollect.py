@@ -123,7 +123,7 @@ class DataBuffer(threading.Thread):
         self.lock = threading.Lock()
 
         # Channels
-        self.channels = [0]
+        self.channels = [0, 1, 2]
         # self.channels = [0]
 
     def run(self):
@@ -174,6 +174,7 @@ class DataBuffer(threading.Thread):
             )
             reading_arr = self.loaded_model['poly'].transform(reading_df)
             reading_arr = self.loaded_model['quad_model'].predict(reading_arr)
+            reading_arr = reading_arr + 1.6
 
             if self.z_pressure is None:
                 self.z_pressure = signal.sosfilt_zi(self.sos_pressure) * reading_arr
