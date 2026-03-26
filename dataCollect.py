@@ -108,11 +108,11 @@ class DataBuffer(threading.Thread):
         self.z_load2 = None
 
         # Kalman filters
-        process_var = 1e-2
-        meas_var = 38791215.89354596
+        process_var = 1e-1
+        meas_var = 38791215.89354596 / 10
 
-        self.kf_1 = KalmanVolumeFlow(1/100, process_var, meas_var)
-        self.kf_2 = KalmanVolumeFlow(1/100, process_var, meas_var)
+        self.kf_1 = KalmanVolumeFlow(1/self.fs, process_var, meas_var)
+        self.kf_2 = KalmanVolumeFlow(1/self.fs, process_var, meas_var)
 
         # I2C + ADC
         self.i2c = busio.I2C(board.SCL, board.SDA)
