@@ -10,7 +10,7 @@ class VolumeWaveform(LayoutDesigns):
         self.colour_header(title="Volume-Based Drainage", card_bg="#8e44ad")
        
         self.bg_purple = "#8e44ad"
-        self.faded_purple = "#F3EAF8"  # Very light lavender
+        self.faded_purple = "#F3EAF9"  # Very light lavender
         self.setup_ui()
 
     def setup_ui(self):
