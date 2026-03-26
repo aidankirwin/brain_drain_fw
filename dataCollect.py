@@ -137,11 +137,13 @@ class DataBuffer(threading.Thread):
                     self.add_data("icp", "control", value)
 
                 elif ch == 1:
+                    # drainage load cell
                     self.add_data("load1", "display", value[0])  # weight
                     self.add_data("load1", "control", value[0])
                     self.add_data("load1", "flow", value[1])
 
                 elif ch == 2:
+                    # flushing load cell
                     self.add_data("load2", "display", value[0])
                     self.add_data("load2", "control", value[0])
                     self.add_data("load2", "flow", value[1])

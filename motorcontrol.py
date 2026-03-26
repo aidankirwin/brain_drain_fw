@@ -23,11 +23,17 @@ class MotorControl(threading.Thread):
         self.motor = PWMOutputDevice(self.motor_pin)
         self.delay_time = None
 
+        self.is_irrigating = False
+
     def run(self):
         while self.running:
             control_batch = self.data_buffer.fetch_buffer('icp', 'control')
             if control_batch is not None:
                 self.delay_time = self.calculate_step_response(control_batch, self.is_draining)
+
+            if self.is_irrigating is True:
+                self.is_irrigating = False
+                self.irrigate()
             
             time.sleep(self.interval)
     
@@ -66,8 +72,8 @@ class MotorControl(threading.Thread):
     def irrigate(self):
         print('irrigating')
         self.servo.angle = 180
-        time.sleep(1)
         self.servo.detach()
+        time.sleep(2)
 
         for i in range(2):
                 print("motor go")
@@ -81,7 +87,7 @@ class MotorControl(threading.Thread):
             time.sleep(1)
 
         self.servo.angle = 0
-        time.sleep(1)
+        time.sleep(2)
 
         self.servo.detach()
     

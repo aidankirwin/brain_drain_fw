@@ -77,7 +77,7 @@ class App:
         self.motor_control.fetch_drainage_state(is_draining)
 
     def irrigate(self):
-        self.motor_control.irrigate()
+        self.motor_control.is_irrigating = True
 
     def show(self, screen_name):
         self.frames[screen_name].tkraise()
