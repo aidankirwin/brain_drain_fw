@@ -163,6 +163,8 @@ class DataBuffer(threading.Thread):
 
     def read_channel(self, ch):
         reading = float(self.ads.read(ch))
+        noise_ref = float(self.ads.read(3))
+        reading = reading - noise_ref
 
         if ch == 0:  # pressure
             reading_arr = np.atleast_1d(reading)
