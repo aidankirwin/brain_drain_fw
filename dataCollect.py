@@ -66,7 +66,8 @@ class DataBuffer(threading.Thread):
         self.running = True
 
         # Timing
-        self.period = 0.0033  # ~300 Hz
+        self.period = 0.002
+        self.fs = 100
 
         # Load calibration model
         with open('model.pkl', 'rb') as handle:
@@ -98,8 +99,8 @@ class DataBuffer(threading.Thread):
         }
 
         # Filters
-        self.sos_pressure = signal.butter(4, 20, btype='low', output='sos', fs=100)
-        self.sos_loadcell = signal.butter(4, 0.5, btype='low', output='sos', fs=100)
+        self.sos_pressure = signal.butter(4, 20, btype='low', output='sos', fs=self.fs)
+        self.sos_loadcell = signal.butter(4, 0.5, btype='low', output='sos', fs=self.fs)
 
         self.z_pressure = None
         self.z_load1 = None
@@ -149,7 +150,7 @@ class DataBuffer(threading.Thread):
                     self.add_data("load2", "flow", value[1])
 
             loop_end = time.perf_counter()
-            # print(f"Loop period: {loop_end - loop_start:.6f}s")
+            print(f"Loop period: {loop_end - loop_start:.6f}s")
 
             # Timing control
             next_time += self.period
@@ -161,6 +162,10 @@ class DataBuffer(threading.Thread):
                 next_time = time.perf_counter()
 
     def read_channel(self, ch):
+        # dummy read (flush old channel)
+        _ = float(self.ads.read(ch))
+
+        # real read
         reading = float(self.ads.read(ch))
 
         if ch == 0:  # pressure
