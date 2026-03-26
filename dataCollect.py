@@ -195,6 +195,7 @@ class DataBuffer(threading.Thread):
 
             if self.load1_tare is not None:
                 reading_arr = reading_arr - self.load1_tare
+                reading_arr = np.atleast_1d(np.max(0, reading_arr[0]))
 
             if self.z_load1 is None:
                 self.z_load1 = signal.sosfilt_zi(self.sos_loadcell) * reading_arr
