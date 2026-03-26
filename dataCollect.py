@@ -66,7 +66,7 @@ class DataBuffer(threading.Thread):
         self.running = True
 
         # Timing
-        self.period = 0.005
+        self.period = 0.01
         self.fs = 100
 
         # Load calibration model
