@@ -153,7 +153,7 @@ class DataBuffer(threading.Thread):
                     self.add_data("load2", "flow", value[1])
 
             loop_end = time.perf_counter()
-            print(f"Loop period: {loop_end - loop_start:.6f}s")
+            # print(f"Loop period: {loop_end - loop_start:.6f}s")
 
             # Timing control
             next_time += self.period
