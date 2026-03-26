@@ -204,11 +204,13 @@ class DataBuffer(threading.Thread):
                 self.sos_loadcell, reading_arr, zi=self.z_load1
             )
 
-            # x = self.kf_1.update(reading_arr[0])
-            x = [0,0]
-            x[0] = reading_arr[0]
-            print(x[0])
-            x[1] = 1
+            if time.time() - self.start_time > 5:
+                x = self.kf_1.update(reading_arr[0])
+            else:
+                x = [0,0]
+                x[0] = reading_arr[0]
+                print(x[0])
+                x[1] = 1
             return x[0], x[1]
 
         elif ch == 2:  # load cell 2
@@ -227,11 +229,13 @@ class DataBuffer(threading.Thread):
                 self.sos_loadcell, reading_arr, zi=self.z_load2
             )
 
-            # x = self.kf_2.update(reading_arr[0])
-            # return x[0], x[1]
-            x = [0,0]
-            x[0] = reading_arr[0]
-            x[1] = 1
+            if time.time() - self.start_time > 5:
+                x = self.kf_2.update(reading_arr[0])
+            else:
+                x = [0,0]
+                x[0] = reading_arr[0]
+                print(x[0])
+                x[1] = 1
             return x[0], x[1]
 
     def add_data(self, sensor, stream, value):
