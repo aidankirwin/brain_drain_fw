@@ -18,11 +18,7 @@ class MotorControl(threading.Thread):
         self.servo_pin = 12
 
         self.servo = AngularServo(self.servo_pin, min_angle=0, max_angle=180, min_pulse_width=0.0005, max_pulse_width=0.0025)
-        time.sleep(2)
-        self.servo.angle = 45
-        time.sleep(2)
-        self.servo.detach()
-        
+        time.sleep(0.5)
         self.servo.detach()
 
         self.motor = PWMOutputDevice(self.motor_pin)
@@ -30,8 +26,16 @@ class MotorControl(threading.Thread):
 
         self.is_irrigating = False
 
+        self.startup = True
+
     def run(self):
         while self.running:
+            if self.startup:
+                self.servo.angle = 0
+                time.sleep(0.5)
+                self.servo.detach()
+                self.startup = False
+                
             control_batch = self.data_buffer.fetch_buffer('icp', 'control')
             if control_batch is not None:
                 self.delay_time = self.calculate_step_response(control_batch, self.is_draining)
@@ -76,8 +80,8 @@ class MotorControl(threading.Thread):
 
     def irrigate(self):
         print('irrigating')
-        self.servo.angle = 135
-        time.sleep(2)
+        self.servo.angle = 90
+        time.sleep(0.5)
         self.servo.detach()
 
         for i in range(2):
@@ -91,8 +95,8 @@ class MotorControl(threading.Thread):
             self.motor.value = 0
             time.sleep(1)
 
-        self.servo.angle = 45
-        time.sleep(2)
+        self.servo.angle = 0
+        time.sleep(0.5)
         self.servo.detach()
     
     def stop(self):
