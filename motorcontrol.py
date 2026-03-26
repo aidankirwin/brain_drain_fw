@@ -47,8 +47,9 @@ class MotorControl(threading.Thread):
             # where x = flow rate in mL/hr, and y is step delay in seconds
 
             print(f'ICP Difference = {icp_difference}, draining at {flow} mL/hr')
-            delay_time = 0.12 * np.e ** (-0.0303 * flow)
+            # delay_time = 0.12 * np.e ** (-0.0303 * flow)
             # delay_time = 1
+            delay_time = None
 
         if icp_difference <= 0 or not is_draining:
             delay_time = None  # No drainage if ICP is below target or if drainage is turned off
