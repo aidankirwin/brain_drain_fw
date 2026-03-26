@@ -11,9 +11,9 @@ class Motor(threading.Thread):
         self.motor_control = motor_control  # Pass data buffer
         self.running = True
         self.interval = 1
-        # self.STEP_PIN = 6
+        self.STEP_PIN = 6
 
-        # GPIO.setup(self.STEP_PIN, GPIO.OUT)
+        GPIO.setup(self.STEP_PIN, GPIO.OUT)
 
     def run(self):
         try:
@@ -22,11 +22,10 @@ class Motor(threading.Thread):
                     time.sleep(self.interval)  # Default delay if no control signal
                 else:
                     print('motor')
-                    time.sleep(self.interval)
-                    # GPIO.output(self.STEP_PIN, GPIO.HIGH)
-                    # time.sleep(0.005)
-                    # GPIO.output(self.STEP_PIN, GPIO.LOW)
-                    # time.sleep(self.motor_control.delay_time)
+                    GPIO.output(self.STEP_PIN, GPIO.HIGH)
+                    time.sleep(0.005)
+                    GPIO.output(self.STEP_PIN, GPIO.LOW)
+                    time.sleep(self.motor_control.delay_time)
 
         except KeyboardInterrupt:
             print("Stopped")

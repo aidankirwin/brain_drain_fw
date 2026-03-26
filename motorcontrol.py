@@ -17,10 +17,10 @@ class MotorControl(threading.Thread):
         self.motor_pin = 13
         self.servo_pin = 12
 
-        # self.servo = AngularServo(self.servo_pin, min_angle=0, max_angle=270)
-        # self.servo.detach()
+        self.servo = AngularServo(self.servo_pin, min_angle=0, max_angle=180, min_pulse_width=0.0005, max_pulse_width=0.0025)
+        self.servo.detach()
 
-        # self.motor = PWMOutputDevice(self.motor_pin)
+        self.motor = PWMOutputDevice(self.motor_pin)
 
     def run(self):
         while self.running:
@@ -42,8 +42,8 @@ class MotorControl(threading.Thread):
             # relationship between flow rate and step response approximately y = 0.12e^-0.0303x
             # where x = flow rate in mL/hr, and y is step delay in seconds
 
-            # delay_time = 0.12 * np.e ** (-0.0303 * icp_difference)
-            delay_time = 1
+            delay_time = 0.12 * np.e ** (-0.0303 * icp_difference)
+            # delay_time = 1
 
         if icp_difference <= 0 or not is_draining:
             delay_time = None  # No drainage if ICP is below target or if drainage is turned off
@@ -59,25 +59,25 @@ class MotorControl(threading.Thread):
 
     def irrigate(self):
         print('irrigating')
-        # self.servo.angle = 180
-        # time.sleep(1)
-        # self.servo.detach()
+        self.servo.angle = 180
+        time.sleep(1)
+        self.servo.detach()
 
-        # for i in range(2):
-        #         print("motor go")
-        #         self.motor.value = 200/255.0  # Convert Arduino PWM (0–255) to 0–1
-        #         time.sleep(1)
+        for i in range(2):
+                print("motor go")
+                self.motor.value = 200/255.0  # Convert Arduino PWM (0–255) to 0–1
+                time.sleep(1)
 
-        # # --- Motor OFF loop ---
-        # for i in range(1):
-        #     print("motor stop")
-        #     self.motor.value = 0
-        #     time.sleep(1)
+        # --- Motor OFF loop ---
+        for i in range(1):
+            print("motor stop")
+            self.motor.value = 0
+            time.sleep(1)
 
-        # self.servo.angle = 0
-        # time.sleep(1)
+        self.servo.angle = 0
+        time.sleep(1)
 
-        # self.servo.detach()
+        self.servo.detach()
     
     def stop(self):
         self.running = False
