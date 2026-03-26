@@ -265,7 +265,7 @@ class ICPWaveform(LayoutDesigns):
         # For waveform drawing
         self.waveform_width = 575
         self.waveform_height = 500
-        self.waveform_buffer = [20] * self.waveform_width  # Start with midline
+        self.waveform_buffer = [0] * self.waveform_width  # Start with midline
 
         # --- BOTTOM BUTTONS ---
         self.set_btn = tk.Label(self, text="Stop Drainage", font=("Helvetica", 20), bg="black", 

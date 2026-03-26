@@ -247,7 +247,7 @@ class DataBuffer(threading.Thread):
                 buf.clear()
 
                 if sensor == 'load1' and self.load1_tare is None:
-                    if time.time() - self.start_time > 4:
+                    if time.time() - self.start_time > 6:
                         print('Tared load cell 1')
                         self.load1_tare = np.mean(batch)
                     return None
