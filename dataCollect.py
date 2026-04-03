@@ -101,15 +101,15 @@ class DataBuffer(threading.Thread):
         # Filters
         self.fs = 50
         self.sos_pressure = signal.butter(4, 3, btype='low', output='sos', fs=self.fs)
-        self.sos_loadcell = signal.butter(7, 0.1, btype='low', output='sos', fs=self.fs)
+        self.sos_loadcell = signal.butter(6, 2, btype='low', output='sos', fs=self.fs)
 
         self.z_pressure = None
         self.z_load1 = None
         self.z_load2 = None
 
         # Kalman filters
-        process_var = 1e-5
-        meas_var = 38791215.89354596
+        process_var = 1e-1
+        meas_var = 38791215.89354596 * 1e-5
 
         self.kf_1 = KalmanVolumeFlow(1/self.fs, process_var, meas_var)
         self.kf_2 = KalmanVolumeFlow(1/self.fs, process_var, meas_var)
