@@ -194,7 +194,7 @@ class DataBuffer(threading.Thread):
             reading_arr = reading_arr * self.lc_scale + self.lc_offset
 
             # if self.load1_tare is not None:
-            #     reading_arr = reading_arr - self.load1_tare + 21.6
+            #     reading_arr = reading_arr - self.load1_tare
             #     reading_arr = np.atleast_1d(np.max([0.0, reading_arr[0]]))
 
             # if self.z_load1 is None:
@@ -220,7 +220,7 @@ class DataBuffer(threading.Thread):
             reading_arr = reading_arr * self.lc_scale + self.lc_offset
 
             if self.load2_tare is not None:
-                reading_arr = reading_arr - self.load2_tare + 20.0
+                reading_arr = reading_arr - self.load2_tare
                 reading_arr = np.atleast_1d(np.max([0.0, reading_arr[0]]))
 
             if self.z_load2 is None:
