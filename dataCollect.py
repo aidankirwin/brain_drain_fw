@@ -219,25 +219,27 @@ class DataBuffer(threading.Thread):
             reading_arr = np.atleast_1d(reading)
             reading_arr = reading_arr * self.lc_scale + self.lc_offset
 
-            if self.load2_tare is not None:
-                reading_arr = reading_arr - self.load2_tare + 20.0
-                reading_arr = np.atleast_1d(np.max([0.0, reading_arr[0]]))
+            # if self.load2_tare is not None:
+            #     reading_arr = reading_arr - self.load2_tare + 20.0
+            #     reading_arr = np.atleast_1d(np.max([0.0, reading_arr[0]]))
 
-            if self.z_load2 is None:
-                self.z_load2 = signal.sosfilt_zi(self.sos_loadcell) * reading_arr
+            # if self.z_load2 is None:
+            #     self.z_load2 = signal.sosfilt_zi(self.sos_loadcell) * reading_arr
 
-            reading_arr, self.z_load2 = signal.sosfilt(
-                self.sos_loadcell, reading_arr, zi=self.z_load2
-            )
+            # reading_arr, self.z_load2 = signal.sosfilt(
+            #     self.sos_loadcell, reading_arr, zi=self.z_load2
+            # )
 
-            if time.time() - self.start_time > 5:
-                x = self.kf_2.update(reading_arr[0])
-            else:
-                x = [0,0]
-                x[0] = reading_arr[0]
-                print(x[0])
-                x[1] = 1
-            return x[0], x[1]
+            # if time.time() - self.start_time > 5:
+            #     x = self.kf_2.update(reading_arr[0])
+            # else:
+            #     x = [0,0]
+            #     x[0] = reading_arr[0]
+            #     print(x[0])
+            #     x[1] = 1
+            # return x[0], x[1]
+
+            return reading_arr[0], 1
 
     def add_data(self, sensor, stream, value):
         with self.lock:
