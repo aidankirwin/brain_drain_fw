@@ -101,7 +101,7 @@ class DataBuffer(threading.Thread):
         # Filters
         self.fs = 50
         self.sos_pressure = signal.butter(4, 3, btype='low', output='sos', fs=self.fs)
-        self.sos_loadcell = signal.butter(4, 0.5, btype='low', output='sos', fs=self.fs)
+        self.sos_loadcell = signal.butter(7, 0.1, btype='low', output='sos', fs=self.fs)
 
         self.z_pressure = None
         self.z_load1 = None
@@ -176,9 +176,9 @@ class DataBuffer(threading.Thread):
                 reading_arr.reshape(-1, 1),
                 columns=self.loaded_model['poly'].feature_names_in_
             )
-            # reading_arr = self.loaded_model['poly'].transform(reading_df)
-            # reading_arr = self.loaded_model['quad_model'].predict(reading_arr)
-            # reading_arr = reading_arr + 1.6
+            reading_arr = self.loaded_model['poly'].transform(reading_df)
+            reading_arr = self.loaded_model['quad_model'].predict(reading_arr)
+            reading_arr = reading_arr + 1.6
 
             if self.z_pressure is None:
                 self.z_pressure = signal.sosfilt_zi(self.sos_pressure) * reading_arr
@@ -193,16 +193,16 @@ class DataBuffer(threading.Thread):
             reading_arr = np.atleast_1d(reading)
             reading_arr = reading_arr * self.lc_scale + self.lc_offset
 
-            # if self.load1_tare is not None:
-            #     reading_arr = reading_arr - self.load1_tare
-            #     reading_arr = np.atleast_1d(np.max([0.0, reading_arr[0]]))
+            if self.load1_tare is not None:
+                reading_arr = reading_arr - self.load1_tare + 21.6
+                reading_arr = np.atleast_1d(np.max([0.0, reading_arr[0]]))
 
-            # if self.z_load1 is None:
-            #     self.z_load1 = signal.sosfilt_zi(self.sos_loadcell) * reading_arr
+            if self.z_load1 is None:
+                self.z_load1 = signal.sosfilt_zi(self.sos_loadcell) * reading_arr
 
-            # reading_arr, self.z_load1 = signal.sosfilt(
-            #     self.sos_loadcell, reading_arr, zi=self.z_load1
-            # )
+            reading_arr, self.z_load1 = signal.sosfilt(
+                self.sos_loadcell, reading_arr, zi=self.z_load1
+            )
 
             # if time.time() - self.start_time > 5:
             #     x = self.kf_1.update(reading_arr[0])
@@ -219,16 +219,16 @@ class DataBuffer(threading.Thread):
             reading_arr = np.atleast_1d(reading)
             reading_arr = reading_arr * self.lc_scale + self.lc_offset
 
-            # if self.load2_tare is not None:
-            #     reading_arr = reading_arr - self.load2_tare
-            #     reading_arr = np.atleast_1d(np.max([0.0, reading_arr[0]]))
+            if self.load2_tare is not None:
+                reading_arr = reading_arr - self.load2_tare + 20.0
+                reading_arr = np.atleast_1d(np.max([0.0, reading_arr[0]]))
 
-            # if self.z_load2 is None:
-            #     self.z_load2 = signal.sosfilt_zi(self.sos_loadcell) * reading_arr
+            if self.z_load2 is None:
+                self.z_load2 = signal.sosfilt_zi(self.sos_loadcell) * reading_arr
 
-            # reading_arr, self.z_load2 = signal.sosfilt(
-            #     self.sos_loadcell, reading_arr, zi=self.z_load2
-            # )
+            reading_arr, self.z_load2 = signal.sosfilt(
+                self.sos_loadcell, reading_arr, zi=self.z_load2
+            )
 
             # if time.time() - self.start_time > 5:
             #     x = self.kf_2.update(reading_arr[0])
