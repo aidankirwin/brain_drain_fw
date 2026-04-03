@@ -101,7 +101,7 @@ class DataBuffer(threading.Thread):
         # Filters
         self.fs = 50
         self.sos_pressure = signal.butter(4, 3, btype='low', output='sos', fs=self.fs)
-        self.sos_loadcell = signal.butter(6, 0.5, btype='low', output='sos', fs=self.fs)
+        self.sos_loadcell = signal.butter(8, 0.1, btype='low', output='sos', fs=self.fs)
 
         self.z_pressure = None
         self.z_load1 = None
