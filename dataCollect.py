@@ -180,12 +180,12 @@ class DataBuffer(threading.Thread):
             # reading_arr = self.loaded_model['quad_model'].predict(reading_arr)
             # reading_arr = reading_arr + 1.6
 
-            # if self.z_pressure is None:
-            #     self.z_pressure = signal.sosfilt_zi(self.sos_pressure) * reading_arr
+            if self.z_pressure is None:
+                self.z_pressure = signal.sosfilt_zi(self.sos_pressure) * reading_arr
 
-            # reading_arr, self.z_pressure = signal.sosfilt(
-            #     self.sos_pressure, reading_arr, zi=self.z_pressure
-            # )
+            reading_arr, self.z_pressure = signal.sosfilt(
+                self.sos_pressure, reading_arr, zi=self.z_pressure
+            )
             return reading_arr[0]
 
         elif ch == 1:  # load cell 1
