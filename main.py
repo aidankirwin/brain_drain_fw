@@ -6,7 +6,7 @@ import sys
 
 from dataSaver import data_saver, SAVE_DATA
 
-mode = 'DEMO'
+mode = 'MOTOR_TEST'
 # DEMO, MOTOR_TEST, SENSOR_TEST
 
 def cleanup(*args):
