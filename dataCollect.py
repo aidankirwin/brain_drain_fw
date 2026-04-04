@@ -181,7 +181,7 @@ class DataBuffer(threading.Thread):
     def read_channel(self, ch):
 
         if ch == 0:  # pressure
-            reading = -1*float(AnalogIn(self.ads, ads1x15.Pin.A0).value)
+            reading = float(AnalogIn(self.ads, ads1x15.Pin.A0).value)
             reading_arr = np.atleast_1d(reading)
             # reading_df = pd.DataFrame(
             #     reading_arr.reshape(-1, 1),
