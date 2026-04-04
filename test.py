@@ -125,13 +125,13 @@ class App:
         )
         self.button.pack(pady=20)
 
-        self.exit_button = tk.Button(
-            frame,
-            text="Exit",
-            font=("Arial", 16),
-            command=self.shutdown
-        )
-        self.exit_button.pack(pady=20)
+        # self.exit_button = tk.Button(
+        #     frame,
+        #     text="Exit",
+        #     font=("Arial", 16),
+        #     command=self.shutdown
+        # )
+        # self.exit_button.pack(pady=20)
 
         self.update_ui()
 
