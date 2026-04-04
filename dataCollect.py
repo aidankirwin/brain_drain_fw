@@ -223,12 +223,12 @@ class DataBuffer(threading.Thread):
                 reading_arr = reading_arr - self.load2_tare + 20.0
                 reading_arr = np.atleast_1d(np.max([0.0, reading_arr[0]]))
 
-            if self.z_load2 is None:
-                self.z_load2 = signal.sosfilt_zi(self.sos_loadcell) * reading_arr
+            # if self.z_load2 is None:
+            #     self.z_load2 = signal.sosfilt_zi(self.sos_loadcell) * reading_arr
 
-            reading_arr, self.z_load2 = signal.sosfilt(
-                self.sos_loadcell, reading_arr, zi=self.z_load2
-            )
+            # reading_arr, self.z_load2 = signal.sosfilt(
+            #     self.sos_loadcell, reading_arr, zi=self.z_load2
+            # )
 
             # if time.time() - self.start_time > 5:
             #     x = self.kf_2.update(reading_arr[0])
