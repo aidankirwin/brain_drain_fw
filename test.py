@@ -141,24 +141,6 @@ class App:
     def update_ui(self):
         self.root.after(500, self.update_ui)
 
-    def shutdown(self):
-        cleanup()
-
-
-# CLEAN SHUTDOWN
-
-def cleanup(*args):
-    global running
-    print("Shutting down UNSAFELY...")
-
-    running = False
-
-    sys.exit(0)
-
-
-signal.signal(signal.SIGTERM, cleanup)
-signal.signal(signal.SIGINT, cleanup)
-
 
 # MAIN ENTRY
 
