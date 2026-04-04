@@ -12,10 +12,6 @@ class DataSaver:
         self.filename = filename
         self.sensor_data = []
         self.motor_data = []
-        
-        # also save time stamps of new entries
-        self.sensor_times = []
-        self.motor_times = []
 
         self.start_time = time.time()
         self.last_updated = time.time()
@@ -24,13 +20,14 @@ class DataSaver:
         entry_time = time.time() - self.start_time
         if type == 'sensor':
             # entry is a dictionary with keys 'icp', 'load1', 'load2' and values are the corresponding readings
+            # also append time to the entry
+            entry['time'] = entry_time
             self.sensor_data.append(entry)
-            self.sensor_times.append(entry_time)
         elif type == 'motor':
             # entry is a dictionary with keys 'motor_target_flow', 'motor_step_delay' and values are the corresponding values
             # entry is a single value, so just save the entry_time
+            entry['time'] = entry_time
             self.motor_data.append(entry)
-            self.motor_times.append(entry_time)
 
         if time.time() - self.last_updated > 10:  # Update every 10s
             self.update_csv()
@@ -39,18 +36,13 @@ class DataSaver:
     def update_csv(self):
         # update the two csv files with new data without overwriting old data
         if self.sensor_data:
-            # format the sensor data into a dataframe with columns 'time', 'icp', 'load1', 'load2'
-            sensor_df = pd.DataFrame(self.sensor_data, columns=['icp', 'load1', 'load2'])
-            sensor_df['time'] = self.sensor_times
+            sensor_df = pd.DataFrame(self.sensor_data)
             sensor_df.to_csv(f'{self.filename}_sensor.csv', mode='a', header=not pd.io.common.file_exists(f'{self.filename}_sensor.csv'), index=False)
             self.sensor_data = []  # Clear the buffer after saving
-            self.sensor_times = []  # Clear the time buffer after saving
         if self.motor_data:
             # format the motor data into a dataframe with columns 'time', 'motor_target_flow', 'motor_step_delay'
-            motor_df = pd.DataFrame(self.motor_data, columns=['motor_target_flow', 'motor_step_delay'])
-            motor_df['time'] = self.motor_times
+            motor_df = pd.DataFrame(self.motor_data)
             motor_df.to_csv(f'{self.filename}_motor.csv', mode='a', header=not pd.io.common.file_exists(f'{self.filename}_motor.csv'), index=False)
             self.motor_data = []  # Clear the buffer after saving
-            self.motor_times = []  # Clear the time buffer after saving
 
 data_saver = DataSaver(FILE_NAME)
