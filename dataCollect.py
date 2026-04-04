@@ -71,10 +71,8 @@ class DataBuffer(threading.Thread):
         self.period = 0.0033  # ~300 Hz
 
         # Load calibration model
-        with open('model.pkl', 'rb') as handle:
+        with open('model_apr4.pkl', 'rb') as handle:
             self.loaded_model = pickle.load(handle)
-
-        self.icp_offset = -59.9
 
         self.lc_scale = 0.32830703
         self.lc_offset = -1634.5324180655623
@@ -183,20 +181,20 @@ class DataBuffer(threading.Thread):
         if ch == 0:  # pressure
             reading = float(AnalogIn(self.ads, ads1x15.Pin.A0).value)
             reading_arr = np.atleast_1d(reading)
-            # reading_df = pd.DataFrame(
-            #     reading_arr.reshape(-1, 1),
-            #     columns=self.loaded_model['poly'].feature_names_in_
-            # )
-            # reading_arr = self.loaded_model['poly'].transform(reading_df)
-            # reading_arr = self.loaded_model['quad_model'].predict(reading_arr)
-            # reading_arr = reading_arr + self.icp_offset
+            reading_df = pd.DataFrame(
+                reading_arr.reshape(-1, 1),
+                columns=self.loaded_model['poly'].feature_names_in_
+            )
+            reading_arr = self.loaded_model['poly'].transform(reading_df)
+            reading_arr = self.loaded_model['quad_model'].predict(reading_arr)
+            reading_arr = reading_arr + self.icp_offset
 
-            # if self.z_pressure is None:
-            #     self.z_pressure = signal.sosfilt_zi(self.sos_pressure) * reading_arr
+            if self.z_pressure is None:
+                self.z_pressure = signal.sosfilt_zi(self.sos_pressure) * reading_arr
 
-            # reading_arr, self.z_pressure = signal.sosfilt(
-            #     self.sos_pressure, reading_arr, zi=self.z_pressure
-            # )
+            reading_arr, self.z_pressure = signal.sosfilt(
+                self.sos_pressure, reading_arr, zi=self.z_pressure
+            )
             return reading_arr[0]
 
         elif ch == 1:  # load cell 1
