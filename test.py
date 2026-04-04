@@ -55,21 +55,21 @@ def motor_test_loop():
         while True:
 
             # --- Motor ON loop ---
-            for i in range(2):
-                print("dc motor start")
-                motor.value = 200/255.0  # Convert Arduino PWM (0–255) to 0–1
-                time.sleep(1)
+            # for i in range(2):
+            #     print("dc motor start")
+            #     motor.value = 200/255.0  # Convert Arduino PWM (0–255) to 0–1
+            #     time.sleep(1)
 
-            # --- Motor OFF loop ---
-            for i in range(1):
-                print("dc motor stop")
-                motor.value = 0
-                time.sleep(1)
+            # # --- Motor OFF loop ---
+            # for i in range(1):
+            #     print("dc motor stop")
+            #     motor.value = 0
+            #     time.sleep(1)
 
-            time.sleep(2)
+            # time.sleep(2)
 
             # --- Stepper pulse loop ---
-            for i in range(100):
+            for i in range(1000):
                 print("stepper motor")
                 GPIO.output(step_pin, GPIO.HIGH)
                 time.sleep(0.005)
@@ -77,17 +77,17 @@ def motor_test_loop():
                 time.sleep(delay_time)
 
             # --- Servo movement ---
-            time.sleep(2)
-            for i in range(2):
-                print('servo move')
-                servo.angle = 0
-                time.sleep(4)
-                servo.angle = 180
-                time.sleep(4)
+            # time.sleep(2)
+            # for i in range(2):
+            #     print('servo move')
+            #     servo.angle = 0
+            #     time.sleep(4)
+            #     servo.angle = 180
+            #     time.sleep(4)
 
             # Optional: "detach" equivalent (stop sending signal)
-            servo.detach()
-            time.sleep(4)
+            # servo.detach()
+            # time.sleep(4)
 
     except KeyboardInterrupt:
         print("Exiting...")
