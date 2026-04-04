@@ -74,6 +74,8 @@ class DataBuffer(threading.Thread):
         with open('model_apr4.pkl', 'rb') as handle:
             self.loaded_model = pickle.load(handle)
 
+        self.kpa_to_mmhg = 7.50062
+
         self.lc_scale = 0.32830703
         self.lc_offset = -1634.5324180655623
         self.load1_tare = None
@@ -184,6 +186,7 @@ class DataBuffer(threading.Thread):
             reading_arr = reading_arr.reshape(-1, 1)
             reading_arr = self.loaded_model['poly'].transform(reading_arr)
             reading_arr = self.loaded_model['quad_model'].predict(reading_arr)
+            reading_arr = reading_arr * self.kpa_to_mmhg
 
             if self.z_pressure is None:
                 self.z_pressure = signal.sosfilt_zi(self.sos_pressure) * reading_arr
