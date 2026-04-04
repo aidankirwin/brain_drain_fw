@@ -21,14 +21,11 @@ class DataSaver:
         self.last_updated = time.time()
 
     def add_entry(self, entry, type):
-        entry_time = time.time()
+        entry_time = time.time() - self.start_time
         if type == 'sensor':
             # entry is a dictionary with keys 'icp', 'load1', 'load2' and values are the corresponding readings
-            # entry is 25 values sampled at 50Hz, so it represents 0.5 seconds of data
-            # generate a time array for the 25 values starting from entry_time and going back in time with a step of 0.02 seconds
-            time_array = [entry_time - i*0.02 for i in range(len(entry))]
             self.sensor_data.append(entry)
-            self.sensor_times.append(time_array)
+            self.sensor_times.append(entry_time)
         elif type == 'motor':
             # entry is a dictionary with keys 'motor_target_flow', 'motor_step_delay' and values are the corresponding values
             # entry is a single value, so just save the entry_time
