@@ -2,7 +2,7 @@ import pandas as pd
 import time
 
 SAVE_DATA = True
-FILE_NAME = 'brain_drain_data'
+FILE_NAME = 'brain_drain_data_0kpa'
 
 # global/singleton data saver
 # saves data (either passed as a buffer of 25 values or a single value) to one of 2 lists (sensor or motor), updates csv files every 5 minutes or when the program is stopped

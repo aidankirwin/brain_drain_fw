@@ -68,7 +68,7 @@ class MotorControl(threading.Thread):
             if SAVE_DATA:
                 data_saver.add_entry({'motor_target_flow': flow, 'motor_step_delay': delay_time}, 'motor')
             # delay_time = 1
-            # delay_time = None
+            delay_time = None
 
         if icp_difference <= 0 or not is_draining:
             delay_time = None  # No drainage if ICP is below target or if drainage is turned off
