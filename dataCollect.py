@@ -184,7 +184,6 @@ class DataBuffer(threading.Thread):
             reading_df = reading_arr.reshape(-1, 1),
             reading_arr = self.loaded_model['poly'].transform(reading_df)
             reading_arr = self.loaded_model['quad_model'].predict(reading_arr)
-            reading_arr = reading_arr + self.icp_offset
 
             if self.z_pressure is None:
                 self.z_pressure = signal.sosfilt_zi(self.sos_pressure) * reading_arr
