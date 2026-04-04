@@ -316,7 +316,7 @@ class ICPWaveform(LayoutDesigns):
 
     def update_waveform(self):
         # Try to get a batch of N new points
-        display_batch_icp = self.data_buffer.fetch_buffer('load1', 'display')
+        display_batch_icp = self.data_buffer.fetch_buffer('icp', 'display')
         
         # If not enough new data yet, skip drawing
         if display_batch_icp is None:
