@@ -35,7 +35,7 @@ class DataSaver:
             self.motor_data.append(entry)
             self.motor_times.append(entry_time)
 
-        if time.time() - self.last_updated > 30:  # Update every 30s
+        if time.time() - self.last_updated > 10:  # Update every 10s
             self.update_csv()
             self.last_updated = time.time()
 
@@ -47,11 +47,13 @@ class DataSaver:
             sensor_df['time'] = self.sensor_times
             sensor_df.to_csv(f'{self.filename}_sensor.csv', mode='a', header=not pd.io.common.file_exists(f'{self.filename}_sensor.csv'), index=False)
             self.sensor_data = []  # Clear the buffer after saving
+            self.sensor_times = []  # Clear the time buffer after saving
         if self.motor_data:
             # format the motor data into a dataframe with columns 'time', 'motor_target_flow', 'motor_step_delay'
             motor_df = pd.DataFrame(self.motor_data, columns=['motor_target_flow', 'motor_step_delay'])
             motor_df['time'] = self.motor_times
             motor_df.to_csv(f'{self.filename}_motor.csv', mode='a', header=not pd.io.common.file_exists(f'{self.filename}_motor.csv'), index=False)
             self.motor_data = []  # Clear the buffer after saving
+            self.motor_times = []  # Clear the time buffer after saving
 
 data_saver = DataSaver(FILE_NAME)
