@@ -181,8 +181,8 @@ class DataBuffer(threading.Thread):
         if ch == 0:  # pressure
             reading = float(AnalogIn(self.ads, ads1x15.Pin.A0).value)
             reading_arr = np.atleast_1d(reading)
-            reading_df = reading_arr.reshape(-1, 1),
-            reading_arr = self.loaded_model['poly'].transform(reading_df)
+            reading_arr = reading_arr.reshape(-1, 1)
+            reading_arr = self.loaded_model['poly'].transform(reading_arr)
             reading_arr = self.loaded_model['quad_model'].predict(reading_arr)
 
             if self.z_pressure is None:
