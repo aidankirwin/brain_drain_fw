@@ -35,7 +35,7 @@ class DataSaver:
             self.motor_data.append(entry)
             self.motor_times.append(entry_time)
 
-        if time.time() - self.last_updated > 300:  # Update every 5 minutes
+        if time.time() - self.last_updated > 30:  # Update every 30s
             self.update_csv()
             self.last_updated = time.time()
 
