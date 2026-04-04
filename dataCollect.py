@@ -118,7 +118,7 @@ class DataBuffer(threading.Thread):
         self.i2c = busio.I2C(board.SCL, board.SDA)
         self.ads = ADS.ADS1115(self.i2c)
         self.ads.mode = ads1x15.Mode.SINGLE
-        self.ads.data_rate = 250
+        self.ads.data_rate = 475
 
         # Thread safety
         self.lock = threading.Lock()
