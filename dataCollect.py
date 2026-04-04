@@ -74,7 +74,7 @@ class DataBuffer(threading.Thread):
         with open('model.pkl', 'rb') as handle:
             self.loaded_model = pickle.load(handle)
 
-        self.icp_offset = 2.5
+        self.icp_offset = -54.9
 
         self.lc_scale = 0.32830703
         self.lc_offset = -1634.5324180655623
