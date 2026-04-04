@@ -10,6 +10,7 @@ from scipy import signal
 import pickle
 import copy
 import random
+from dataSaver import data_saver, SAVE_DATA
 
 class KalmanVolumeFlow:
     def __init__(self, dt, process_var_flow=0.01, meas_var=1.0):
@@ -118,7 +119,7 @@ class DataBuffer(threading.Thread):
         self.i2c = busio.I2C(board.SCL, board.SDA)
         self.ads = ADS.ADS1115(self.i2c)
         self.ads.mode = ads1x15.Mode.SINGLE
-        self.ads.data_rate = 475
+        self.ads.data_rate = 250
 
         # Thread safety
         self.lock = threading.Lock()
@@ -135,24 +136,32 @@ class DataBuffer(threading.Thread):
         while self.running:
             loop_start = time.perf_counter()
 
+            readings = {}  # For saving data
+
             for ch in self.channels:
                 value = self.read_channel(ch)
 
                 if ch == 0:
                     self.add_data("icp", "display", value)
                     self.add_data("icp", "control", value)
+                    readings['icp'] = value
 
                 elif ch == 1:
                     # drainage load cell
                     self.add_data("load1", "display", value[0])  # weight
                     self.add_data("load1", "control", value[0])
                     self.add_data("load1", "flow", value[1])
+                    readings['load1'] = value[0]
 
                 elif ch == 2:
                     # flushing load cell
                     self.add_data("load2", "display", value[0])
                     self.add_data("load2", "control", value[0])
                     self.add_data("load2", "flow", value[1])
+                    readings['load2'] = value[0]
+
+            if SAVE_DATA:
+                data_saver.add_entry(readings, 'sensor')
 
             loop_end = time.perf_counter()
             # print(f"Loop period: {loop_end - loop_start:.6f}s")
@@ -178,7 +187,7 @@ class DataBuffer(threading.Thread):
             )
             reading_arr = self.loaded_model['poly'].transform(reading_df)
             reading_arr = self.loaded_model['quad_model'].predict(reading_arr)
-            reading_arr = reading_arr + 1.6
+            reading_arr = reading_arr - 3.4
 
             if self.z_pressure is None:
                 self.z_pressure = signal.sosfilt_zi(self.sos_pressure) * reading_arr

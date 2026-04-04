@@ -3,6 +3,7 @@ import time
 import numpy as np
 import RPi.GPIO as GPIO
 from gpiozero import PWMOutputDevice, AngularServo
+from dataSaver import data_saver, SAVE_DATA
 
 class MotorControl(threading.Thread):
     def __init__(self, data_buffer, target_icp, is_draining):
@@ -63,6 +64,9 @@ class MotorControl(threading.Thread):
 
             print(f'ICP Difference = {icp_difference}, draining at {flow} mL/hr')
             delay_time = 0.12 * np.e ** (-0.0303 * flow)
+
+            if SAVE_DATA:
+                data_saver.add_entry({'motor_target_flow': flow, 'motor_step_delay': delay_time}, 'motor')
             # delay_time = 1
             # delay_time = None
 
