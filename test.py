@@ -149,7 +149,7 @@ class App:
 
 def cleanup(*args):
     global running
-    print("Shutting down safely...")
+    print("Shutting down UNSAFELY...")
 
     running = False
 
