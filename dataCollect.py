@@ -74,6 +74,8 @@ class DataBuffer(threading.Thread):
         with open('model.pkl', 'rb') as handle:
             self.loaded_model = pickle.load(handle)
 
+        self.icp_offset = 2.5
+
         self.lc_scale = 0.32830703
         self.lc_offset = -1634.5324180655623
         self.load1_tare = None
@@ -179,7 +181,7 @@ class DataBuffer(threading.Thread):
     def read_channel(self, ch):
 
         if ch == 0:  # pressure
-            reading = float(AnalogIn(self.ads, ads1x15.Pin.A0).value)
+            reading = -1*float(AnalogIn(self.ads, ads1x15.Pin.A0).value)
             reading_arr = np.atleast_1d(reading)
             reading_df = pd.DataFrame(
                 reading_arr.reshape(-1, 1),
@@ -187,7 +189,7 @@ class DataBuffer(threading.Thread):
             )
             reading_arr = self.loaded_model['poly'].transform(reading_df)
             reading_arr = self.loaded_model['quad_model'].predict(reading_arr)
-            reading_arr = reading_arr - 3.4
+            reading_arr = reading_arr - self.icp_offset
 
             if self.z_pressure is None:
                 self.z_pressure = signal.sosfilt_zi(self.sos_pressure) * reading_arr
