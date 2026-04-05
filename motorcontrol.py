@@ -32,7 +32,7 @@ class MotorControl(threading.Thread):
     def run(self):
         while self.running:
             if self.startup:
-                self.servo.angle = 90
+                self.servo.angle = 80
                 time.sleep(0.5)
                 self.servo.detach()
                 self.startup = False
