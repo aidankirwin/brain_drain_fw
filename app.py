@@ -33,7 +33,7 @@ class App:
         motor.start()
 
         # create a popup after 10 seconds to simulate blockage detection
-        root.after(10000, create_popup)
+        root.after(10000, self.create_popup)
 
         print('creating main window')
         # creating the main window
