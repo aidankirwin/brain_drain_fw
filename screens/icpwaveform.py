@@ -1,10 +1,13 @@
+from logging import root
 import tkinter as tk
 from layout import LayoutDesigns
-from dataCollect import DataBuffer
+from tkinter.font import Font
+from dataBuffer import DataBuffer
+from PIL import Image, ImageTk
 
 class ICPWaveform(LayoutDesigns):
 
-    def __init__(self, parent, controller, data_buffer : DataBuffer):
+    def __init__(self, parent, controller, data_buffer=None):
         super().__init__(parent, controller)
         self.controller = controller
         self.data_buffer = data_buffer
@@ -106,10 +109,21 @@ class ICPWaveform(LayoutDesigns):
             self.update_display_text()
 
         # UI for Numpad
-        buttons = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'Clear', '0', '⌫', 'Done']
+        buttons = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'Clear', '0', '⌫']
+        
+        self.done_button = tk.Button(
+            self.numpad_frame, 
+            text="Done",
+            font=("Helvetica", 18, "bold"), 
+            command=self.dismiss_numpad  # Direct command call
+        )
+        
+        self.done_button.grid(row=4, column=0, columnspan=3, sticky="nsew")
+
         for i, label in enumerate(buttons):
             r, c = i // 3, i % 3
             colspan = 3 if label == 'Done' else 1
+
             b = tk.Button(self.numpad_frame, text=label, font=("Helvetica", 18, "bold"),
                           command=lambda l=label: numpad_click(l))
             b.grid(row=r, column=c, columnspan=colspan, sticky="nsew", padx=2, pady=2)
@@ -183,6 +197,12 @@ class ICPWaveform(LayoutDesigns):
         grid_container = tk.Frame(outer_frame, bg="black")
         grid_container.pack(pady=(40, 10), padx=20, fill="x")
 
+        # Load edit button image
+        icon_image = Image.open("Icons/edit-pencil.png")
+        icon_image = icon_image.resize((25, 25), Image.LANCZOS)
+        target_icon = ImageTk.PhotoImage(icon_image)
+        self.images = {}  # keep references to images to avoid garbage collection
+
         # --- CURRENT ICP ---
         self.current_icp = tk.Text(grid_container, bg="white", fg="#4FA542", height=8, width=15, 
                                    borderwidth=0, padx=10, pady=10, highlightthickness=0)
@@ -194,7 +214,7 @@ class ICPWaveform(LayoutDesigns):
         
         self.current_icp.insert(tk.END, "\n", "small_font")
         self.current_icp.insert(tk.END, "Current ICP:\n", "normal_font")
-        self.current_icp.insert(tk.END, "10", "big_font")
+        self.current_icp.insert(tk.END, "--", "big_font")
         self.current_icp.insert(tk.END, "mmHg\n", "small_font")
         
         self.current_icp.configure(state=tk.DISABLED)
@@ -214,9 +234,12 @@ class ICPWaveform(LayoutDesigns):
 
         self.target_icp.insert(tk.END, "\n", "small_font")
     
-        self.target_icp.insert(tk.END, "Target ICP: \n", "normal_font") 
+        self.target_icp.insert(tk.END, "Target ICP: \n", "normal_font")
         self.target_icp.insert(tk.END, "12", ("big_font", "val")) 
         self.target_icp.insert(tk.END, " mmHg", "normal_font")
+        
+        self.target_icp.image_create("end", image = target_icon)
+        self.images["target_icon"] = target_icon  # Keep reference to avoid garbage collection
 
         self.target_icp.bind("<Button-1>", lambda e: self.show_numpad(e, self.target_icp))
 
@@ -238,7 +261,7 @@ class ICPWaveform(LayoutDesigns):
 
         self.vdbagnum.insert(tk.END, "\n", "small_font")
         
-        self.vdbagnum.insert(tk.END, "150", "big_font")
+        self.vdbagnum.insert(tk.END, "--", "big_font")
         self.vdbagnum.insert(tk.END, "ml", "normal_font")
         self.vdbagnum.configure(state=tk.DISABLED)
 
@@ -265,7 +288,7 @@ class ICPWaveform(LayoutDesigns):
         # For waveform drawing
         self.waveform_width = 575
         self.waveform_height = 500
-        self.waveform_buffer = [20] * self.waveform_width  # Start with midline
+        self.waveform_buffer = [0] * self.waveform_width  # Start with midline
 
         # --- BOTTOM BUTTONS ---
         self.set_btn = tk.Label(self, text="Stop Drainage", font=("Helvetica", 20), bg="black", 
@@ -273,12 +296,12 @@ class ICPWaveform(LayoutDesigns):
         self.set_btn.place(relx=0.82, rely=0.92, anchor="center")
         self.set_btn.bind("<Button-1>", self.toggle_drainage)
 
-        '''
+        
         mode_btn = tk.Label(self, text="Switch Mode", font=("Helvetica", 20), bg="#F3EAF9", 
                             fg="#8e44ad", width=15, height=2, highlightthickness=1, highlightbackground="#8e44ad")
-        mode_btn.place(relx=0.2, rely=0.92, anchor="center")
+        mode_btn.place(relx=0.18, rely=0.92, anchor="center")
         mode_btn.bind("<Button-1>", lambda e: self.controller.show("VolumeWaveform"))
-        '''
+        
         
         # Bind to the main screen background
         self.bind("<Button-1>", self.dismiss_numpad)
@@ -289,14 +312,17 @@ class ICPWaveform(LayoutDesigns):
         # Bind to the waveform section (so clicking the graph area also closes it)
         self.waveform.bind("<Button-1>", self.dismiss_numpad)
 
+        # Bind to the Current ICP section
+        self.current_icp.bind("<Button-1>", self.dismiss_numpad)
+
         # Bind to the Volume section
         self.vdbag.bind("<Button-1>", self.dismiss_numpad)
         self.vdbagnum.bind("<Button-1>", self.dismiss_numpad)
-
+"""
         # Start waveform update loop
         self.update_waveform()
         self.update_current_volume()
-
+ 
     def update_current_volume(self):
         display_batch_vd = self.data_buffer.fetch_buffer('load1', 'display')
         if display_batch_vd is not None:
@@ -316,7 +342,8 @@ class ICPWaveform(LayoutDesigns):
 
     def update_waveform(self):
         # Try to get a batch of N new points
-        display_batch_icp = self.data_buffer.fetch_buffer('icp', 'display')
+        #display_batch_icp = self.data_buffer.fetch_buffer('icp', 'display')
+        display_batch_icp = None
         
         # If not enough new data yet, skip drawing
         if display_batch_icp is None:
@@ -369,4 +396,4 @@ class ICPWaveform(LayoutDesigns):
                                       fill='red', width=1, dash=(4, 4), tags='target_line')
 
         # Schedule next frame
-        self.waveform.after(30, self.update_waveform)
+        self.waveform.after(30, self.update_waveform) """

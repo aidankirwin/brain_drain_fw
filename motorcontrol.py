@@ -1,8 +1,8 @@
 import threading
 import time
 import numpy as np
-import RPi.GPIO as GPIO
-from gpiozero import PWMOutputDevice, AngularServo
+#import RPi.GPIO as GPIO
+#from gpiozero import PWMOutputDevice, AngularServo
 
 class MotorControl(threading.Thread):
     def __init__(self, data_buffer, target_icp, is_draining):

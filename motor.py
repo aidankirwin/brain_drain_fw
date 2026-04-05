@@ -1,5 +1,5 @@
-import RPi.GPIO as GPIO
-from gpiozero import PWMOutputDevice, AngularServo
+#import RPi.GPIO as GPIO
+#from gpiozero import PWMOutputDevice, AngularServo
 
 import time
 import threading

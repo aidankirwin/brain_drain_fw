@@ -4,12 +4,12 @@ import signal
 import threading
 import tkinter as tk
 
-from gpiozero import OutputDevice
+#from gpiozero import OutputDevice
 from time import sleep
 
 import time
-import RPi.GPIO as GPIO
-from gpiozero import PWMOutputDevice, AngularServo
+#import RPi.GPIO as GPIO
+#from gpiozero import PWMOutputDevice, AngularServo
 
 
 def gpio_test_loop():

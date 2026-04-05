@@ -1,14 +1,14 @@
 import threading
 import time
-import board
-import busio
-import adafruit_ads1x15.ads1115 as ADS
+#import board
+#import busio
+#import adafruit_ads1x15.ads1115 as ADS
 import numpy as np
-import pandas as pd
-from scipy import signal
+#import pandas as pd
+#from scipy import signal
 import pickle
 import copy
-import random
+#import random
 
 class KalmanVolumeFlow:
     def __init__(self, dt, process_var_flow=0.01, meas_var=1.0):
@@ -70,13 +70,13 @@ class DataBuffer(threading.Thread):
 
         # Load calibration model
         with open('model.pkl', 'rb') as handle:
-            self.loaded_model = pickle.load(handle)
-
+            #self.loaded_model = pickle.load(handle)
+        
         self.lc_scale = 0.32830703
         self.lc_offset = -1634.5324180655623
         self.load1_tare = None
         self.load2_tare = None
-
+    
         # Buffer config
         self.max_length = 50
 
