@@ -58,7 +58,7 @@ class App:
             if ScreenClass == ICPWaveform:
                 frame = ScreenClass(self.container, self, self.data_buffer)
             else:
-                frame = ScreenClass(self.container, self)
+                frame = ScreenClass(self.container, self, self.data_buffer)
             self.frames[ScreenClass.__name__] = frame
             frame.place(x=0, y=0, relwidth=1, relheight=1)
 
