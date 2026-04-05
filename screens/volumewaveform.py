@@ -297,10 +297,10 @@ class VolumeWaveform(LayoutDesigns):
         self.set_btn.bind("<Button-1>", self.toggle_drainage)
 
         
-        mode_btn = tk.Label(self, text="Switch Mode", font=("Helvetica", 20), bg="#d7f0e6", 
-                            fg="#38B380", width=15, height=2, highlightthickness=1, highlightbackground="#38B380")
-        mode_btn.place(relx=0.2, rely=0.92, anchor="center")
-        mode_btn.bind("<Button-1>", lambda e: self.controller.show("VolumeWaveform"))
+        mode_btn = tk.Label(self, text="Switch Mode", font=("Helvetica", 20), bg="#F3EAF9", 
+                            fg="#8e44ad", width=15, height=2, highlightthickness=1, highlightbackground="#8e44ad")
+        mode_btn.place(relx=0.18, rely=0.92, anchor="center")
+        mode_btn.bind("<Button-1>", lambda e: self.controller.show("ICPWaveform"))
         
         
         # Bind to the main screen background
