@@ -286,6 +286,12 @@ class ICPWaveform(LayoutDesigns):
         self.waveform_height = 500
         self.waveform_buffer = [0] * self.waveform_width  # Start with midline
 
+        self.max_time = self.waveform_width / self.data_buffer.fs
+
+        # Draw waveform X axis
+        x = self.max_time
+        self.x_axis_canvas.create_line(40, x, 60, x, fill="black", tags="y_axis")
+
         # --- BOTTOM BUTTONS ---
         self.set_btn = tk.Label(self, text="Stop Drainage", font=("Helvetica", 20), bg="black", 
                                fg="white", width=15, height=2, relief="raised")
