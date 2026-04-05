@@ -25,7 +25,11 @@ class Motor(threading.Thread):
                     GPIO.output(self.STEP_PIN, GPIO.HIGH)
                     time.sleep(0.005)
                     GPIO.output(self.STEP_PIN, GPIO.LOW)
-                    time.sleep(self.motor_control.delay_time)
+                    if self.motor_control.delay_time is None:
+                        # patch fix for None delay time, it gets set to None on startup before control thread calculates first delay time
+                        time.sleep(self.interval)
+                    else:
+                        time.sleep(self.motor_control.delay_time)
 
         except KeyboardInterrupt:
             print("Stopped")
