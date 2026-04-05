@@ -32,16 +32,21 @@ class AG105:
             "measured_supply_voltage": 0x07
         }
 
-    def read_battery_status(self, register_name):
-        result = bytearray(2)  # 1 byte for status, 1 byte for data
+    def read_raw(self, register_byte):
+        result = bytearray(2)
+        self.i2c.writeto(self.address, bytes([register_byte]))
+        self.i2c.readfrom_into(self.address, result)
+        print(f"RAW: {[hex(b) for b in result]}")
+        return result
 
+    def read_battery_status(self, register_name):
         if register_name not in self.register_bytes:
             raise ValueError(f"Invalid register name: {register_name}")
 
         register_byte = self.register_bytes[register_name]
 
         # Read from the register
-        self.i2c.writeto_then_readfrom(self.address, bytes([register_byte]), result)
+        result = self.read_raw(register_byte)
 
         # Get the status and data bytes
         status_byte = result[0]
@@ -55,13 +60,10 @@ class AG105:
 
         # Interpret the data byte
         if register_name == "measured_battery_voltage":
-            # The data byte represents the battery voltage in 100mV increments
             data = data_byte * 0.064  # Convert to volts
         elif register_name == "measured_battery_current":
-            # The data byte represents the battery current in 100mA increments
             data = data_byte * 0.011 # Convert to amps
         elif register_name == "measured_supply_voltage":
-            # The data byte represents the supply voltage in 100mV increments
             data = data_byte * 0.141  # Convert to volts
         else:
             data = None
