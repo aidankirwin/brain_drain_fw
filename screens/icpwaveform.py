@@ -317,7 +317,8 @@ class ICPWaveform(LayoutDesigns):
             height=550
         )
         self.y_axis_canvas.pack(side="left", padx=(1, 0), pady=1)
-        
+        self.waveform_width = 575
+        self.waveform_height = 500
         self.y_axis_canvas.create_text(
             45, self.waveform_height / 2,   # center of the canvas
             text="Pressure (mmHg)",
@@ -334,8 +335,7 @@ class ICPWaveform(LayoutDesigns):
         self.waveform.pack(side="left", fill="both", expand=True, padx=(0, 1), pady=1)
 
         # For waveform drawing
-        self.waveform_width = 575
-        self.waveform_height = 500
+        
         self.waveform_buffer = [0] * self.waveform_width  # Start with midline
 
         self.max_time = self.waveform_width / self.data_buffer.fs
