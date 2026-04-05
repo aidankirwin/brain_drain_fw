@@ -86,7 +86,8 @@ class DataBuffer(threading.Thread):
 
         self.buffers = {
             "icp": {
-                "display": [],
+                "display_icpscreen": [],
+                "display_volscreen": [],
                 "control": []
             },
             "load1": {
@@ -144,7 +145,8 @@ class DataBuffer(threading.Thread):
                 value = self.read_channel(ch)
 
                 if ch == 0:
-                    self.add_data("icp", "display", value)
+                    self.add_data("icp", "display_icpscreen", value)
+                    self.add_data("icp", "display_volscreen", value)
                     self.add_data("icp", "control", value)
                     readings['icp'] = value
 
