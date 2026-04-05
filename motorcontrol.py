@@ -85,7 +85,7 @@ class MotorControl(threading.Thread):
 
     def irrigate(self):
         print('irrigating')
-        self.servo.angle = 170
+        self.servo.angle = 155
         time.sleep(1)
         self.servo.detach()
 
