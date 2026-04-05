@@ -49,7 +49,7 @@ def motor_test_loop():
     servo.detach()
 
     # Delay settings
-    delay_time = 0.01  # 10 ms
+    delay_time = 0.0075  # 10 ms
 
     try:
         while True:
