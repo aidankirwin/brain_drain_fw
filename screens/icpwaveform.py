@@ -1,6 +1,7 @@
 import tkinter as tk
 from layout import LayoutDesigns
 from dataCollect import DataBuffer
+from PIL import Image, ImageTk
 
 class ICPWaveform(LayoutDesigns):
 
@@ -106,7 +107,16 @@ class ICPWaveform(LayoutDesigns):
             self.update_display_text()
 
         # UI for Numpad
-        buttons = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'Clear', '0', '⌫', 'Done']
+        buttons = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'Clear', '0', '⌫']
+
+        self.done_button = tk.Button(
+            self.numpad_frame, 
+            text="Done",
+            font=("Helvetica", 18, "bold"), 
+            command=self.dismiss_numpad  # Direct command call
+        )
+
+        self.done_button.grid(row=4, column=0, columnspan=3, sticky="nsew")
         for i, label in enumerate(buttons):
             r, c = i // 3, i % 3
             colspan = 3 if label == 'Done' else 1
@@ -182,6 +192,12 @@ class ICPWaveform(LayoutDesigns):
 
         grid_container = tk.Frame(outer_frame, bg="black")
         grid_container.pack(pady=(40, 10), padx=20, fill="x")
+
+        # Load edit button image
+        icon_image = Image.open("icons/edit-pencil.png")
+        icon_image = icon_image.resize((25, 25), Image.LANCZOS)
+        target_icon = ImageTk.PhotoImage(icon_image)
+        self.images = {}  # keep references to images to avoid garbage collection
 
         # --- CURRENT ICP ---
         self.current_icp = tk.Text(grid_container, bg="white", fg="#4FA542", height=8, width=15, 
@@ -273,12 +289,10 @@ class ICPWaveform(LayoutDesigns):
         self.set_btn.place(relx=0.82, rely=0.92, anchor="center")
         self.set_btn.bind("<Button-1>", self.toggle_drainage)
 
-        '''
         mode_btn = tk.Label(self, text="Switch Mode", font=("Helvetica", 20), bg="#F3EAF9", 
                             fg="#8e44ad", width=15, height=2, highlightthickness=1, highlightbackground="#8e44ad")
-        mode_btn.place(relx=0.2, rely=0.92, anchor="center")
+        mode_btn.place(relx=0.18, rely=0.92, anchor="center")
         mode_btn.bind("<Button-1>", lambda e: self.controller.show("VolumeWaveform"))
-        '''
         
         # Bind to the main screen background
         self.bind("<Button-1>", self.dismiss_numpad)
@@ -288,6 +302,9 @@ class ICPWaveform(LayoutDesigns):
 
         # Bind to the waveform section (so clicking the graph area also closes it)
         self.waveform.bind("<Button-1>", self.dismiss_numpad)
+
+        # Bind to the Current ICP section
+        self.current_icp.bind("<Button-1>", self.dismiss_numpad)
 
         # Bind to the Volume section
         self.vdbag.bind("<Button-1>", self.dismiss_numpad)
