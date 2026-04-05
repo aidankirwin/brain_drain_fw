@@ -12,6 +12,7 @@ class DataSaver:
         self.filename = filename
         self.sensor_data = []
         self.motor_data = []
+        self.irrigate_data = []
 
         self.start_time = time.time()
         self.last_updated = time.time()
@@ -28,6 +29,9 @@ class DataSaver:
             # entry is a single value, so just save the entry_time
             entry['time'] = entry_time
             self.motor_data.append(entry)
+        elif type == 'irrigate':
+            entry['time'] = entry_time
+            self.irrigate_data.append(entry)
 
         if time.time() - self.last_updated > 10:  # Update every 10s
             self.update_csv()
@@ -44,5 +48,9 @@ class DataSaver:
             motor_df = pd.DataFrame(self.motor_data)
             motor_df.to_csv(f'{self.filename}_motor.csv', mode='a', header=not pd.io.common.file_exists(f'{self.filename}_motor.csv'), index=False)
             self.motor_data = []  # Clear the buffer after saving
+        if self.irrigate_data:
+            irrigate_df = pd.DataFrame(self.irrigate_data)
+            irrigate_df.to_csv(f'{self.filename}_irrigate.csv', mode='a', header=not pd.io.common.file_exists(f'{self.filename}_irrigate.csv'), index=False)
+            self.irrigate_data = []  # Clear the buffer after saving
 
 data_saver = DataSaver(FILE_NAME)
