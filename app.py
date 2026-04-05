@@ -4,6 +4,92 @@ from screens.icpwaveform import ICPWaveform
 from dataCollect import DataBuffer
 from motorcontrol import MotorControl
 from motor import Motor
+from tkinter.font import Font
+
+def create_popup():
+    # Main Window Setup
+    root = tk.Tk()
+    root.title("System Alert")
+    root.geometry("500x300")
+    root.configure(bg="white")
+
+    # Fonts
+    title_font = Font(family="Inter", size=24, weight="normal")
+    body_font = Font(family="Inter", size=18, weight="normal")
+    button_font = Font(family="Inter", size=16)
+
+    # Main Container
+    content_frame = tk.Frame(root, bg="white", padx=40, pady=40)
+    content_frame.pack(expand=True, fill="both")
+
+    # Header Row (Title)
+    title_label = tk.Label(
+        content_frame, 
+        text="Blockage Detected", 
+        font=title_font, 
+        bg="white", 
+        fg="black"
+    )
+    title_label.grid(row=0, column=1, sticky="w", pady=(0, 20))
+
+    # Icon and Message Row
+    # Note: Using a simple Unicode character for the red '!' icon
+    icon_label = tk.Label(
+        content_frame, 
+        text="!", 
+        font=("Arial", 40, "bold"), 
+        fg="#A52A2A", 
+        bg="white",
+        highlightthickness=3,
+        highlightbackground="#A52A2A",
+        padx=10
+    )
+    icon_label.grid(row=1, column=0, rowspan=2, padx=(0, 20), sticky="n")
+
+    message_text = "An obstruction has been detected.\nManually flush the system or\nirrigate."
+    message_label = tk.Label(
+        content_frame, 
+        text=message_text, 
+        font=body_font, 
+        bg="white", 
+        fg="black", 
+        justify="left"
+    )
+    message_label.grid(row=1, column=1, sticky="w")
+
+    # Button Row
+    button_frame = tk.Frame(content_frame, bg="white")
+    button_frame.grid(row=3, column=1, sticky="e", pady=(30, 0))
+
+    exit_btn = tk.Button(
+        button_frame, 
+        text="Exit", 
+        font=button_font, 
+        bg="white", 
+        fg="black",
+        padx=25, 
+        pady=10,
+        borderwidth=1,
+        relief="solid",
+        command=root.destroy
+    )
+    exit_btn.pack(side="left", padx=10)
+
+    irrigate_btn = tk.Label(
+        button_frame,
+        text="Irrigate",
+        font=("Helvetica", 20), # Slightly smaller for header
+        bg="#D8E6FA",
+        fg="#3D84E7",
+        width=15,
+        height=2,
+        borderwidth=0.5,
+        highlightbackground="blue",
+        highlightthickness=1
+    )
+    irrigate_btn.pack(side="left", padx=10)
+
+    root.mainloop()
 
 class App:
     def __init__(self, root):
@@ -30,6 +116,9 @@ class App:
         # Start motor thread (thread_5)
         motor = Motor(self.motor_control)
         motor.start()
+
+        # create a popup after 10 seconds to simulate blockage detection
+        root.after(10000, create_popup)
 
         print('creating main window')
         # creating the main window
