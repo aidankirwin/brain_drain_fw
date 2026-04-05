@@ -86,15 +86,15 @@ class MotorControl(threading.Thread):
     def irrigate(self):
         print('irrigating')
         self.servo.angle = 180
-        time.sleep(0.5)
+        time.sleep(1)
         self.servo.detach()
 
-        data_saver.add_entry({'irrigate': True}, 'irrigate')
-        for i in range(16):
-                print("motor go")
-                self.motor.value = 200/255.0  # Convert Arduino PWM (0–255) to 0–1
-                time.sleep(1)
-        data_saver.add_entry({'irrigate': False}, 'irrigate')
+        # data_saver.add_entry({'irrigate': True}, 'irrigate')
+        # for i in range(16):
+        #         print("motor go")
+        #         self.motor.value = 200/255.0  # Convert Arduino PWM (0–255) to 0–1
+        #         time.sleep(1)
+        # data_saver.add_entry({'irrigate': False}, 'irrigate')
 
         # --- Motor OFF loop ---
         for i in range(1):
@@ -102,8 +102,8 @@ class MotorControl(threading.Thread):
             self.motor.value = 0
             time.sleep(1)
 
-        self.servo.angle = 90
-        time.sleep(0.5)
+        self.servo.angle = 65
+        time.sleep(1)
         self.servo.detach()
     
     def stop(self):
