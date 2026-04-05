@@ -53,7 +53,7 @@ class AG105:
         data_byte = result[1]
 
         # Get the first 3 bits of the status byte
-        first_3_status_bits = status_byte >> 5
+        first_3_status_bits = status_byte & 0x07
 
         # Interpret the status bits
         status = self.status_bits[first_3_status_bits] if first_3_status_bits in self.status_bits else "unknown_status"
