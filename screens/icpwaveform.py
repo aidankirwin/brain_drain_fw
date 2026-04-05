@@ -234,6 +234,9 @@ class ICPWaveform(LayoutDesigns):
         self.target_icp.insert(tk.END, "12", ("big_font", "val")) 
         self.target_icp.insert(tk.END, " mmHg", "normal_font")
 
+        self.target_icp.image_create("end", image = target_icon)
+        self.images["target_icon"] = target_icon  # Keep reference to avoid garbage collection
+
         self.target_icp.bind("<Button-1>", lambda e: self.show_numpad(e, self.target_icp))
 
         grid_container.columnconfigure(0, weight=1)
