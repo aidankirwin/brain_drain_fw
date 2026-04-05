@@ -21,7 +21,6 @@ class Motor(threading.Thread):
                 if self.motor_control.delay_time is None:
                     time.sleep(self.interval)  # Default delay if no control signal
                 else:
-                    print('motor')
                     GPIO.output(self.STEP_PIN, GPIO.HIGH)
                     time.sleep(0.005)
                     GPIO.output(self.STEP_PIN, GPIO.LOW)

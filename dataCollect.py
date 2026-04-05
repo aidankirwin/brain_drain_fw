@@ -1,17 +1,22 @@
 import threading
 import time
+import copy
+
 import board
 import busio
 import adafruit_ads1x15.ads1115 as ADS
 from adafruit_ads1x15 import AnalogIn, ads1x15
+import RPi.GPIO as GPIO
+
+from drivers.ag105 import AG105
+
 import numpy as np
-import pandas as pd
 from scipy import signal
 import pickle
-import copy
-import random
+
 from dataSaver import data_saver, SAVE_DATA
 
+# Kalman filter for estimating volume and flow from load cell data
 class KalmanVolumeFlow:
     def __init__(self, dt, process_var_flow=0.01, meas_var=1.0):
         self.dt = dt
@@ -59,6 +64,8 @@ class KalmanVolumeFlow:
 
         return self.x.flatten()
 
+# Data collection thread that continuously reads from the ADC channels, processes the data, and saves it to the data saver
+# It also monitors the battery charger status every 5 seconds and saves that data as well
 class DataBuffer(threading.Thread):
     def __init__(self):
         super().__init__()
@@ -131,6 +138,9 @@ class DataBuffer(threading.Thread):
         self.channels = [0, 1, 2]
         # self.channels = [0]
 
+        # Battery charger
+        self.battery_charger = AG105()
+
         self.start_time = time.time()
 
     def run(self):
@@ -139,8 +149,8 @@ class DataBuffer(threading.Thread):
         while self.running:
             loop_start = time.perf_counter()
 
+            # ADC READS
             readings = {}  # For saving data
-
             for ch in self.channels:
                 value = self.read_channel(ch)
 
@@ -169,6 +179,12 @@ class DataBuffer(threading.Thread):
 
             loop_end = time.perf_counter()
             # print(f"Loop period: {loop_end - loop_start:.6f}s")
+
+            # BATTERY CHARGER CHECK
+            # only check the battery charger every 5 seconds
+            if time.time() - self.start_time > 5:
+                battery_voltage, battery_status = self.battery_charger.read_battery_status("measured_battery_voltage")
+                print(f"Battery voltage: {battery_voltage:.2f} V, status: {battery_status}")
 
             # Timing control
             next_time += self.period

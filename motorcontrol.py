@@ -81,7 +81,6 @@ class MotorControl(threading.Thread):
 
     def fetch_drainage_state(self, is_draining):
         self.is_draining = is_draining
-        print(f"{'Draining' if self.is_draining else 'Not Draining WOOOOOOOO'}")
 
     def irrigate(self):
         print('irrigating')
