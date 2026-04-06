@@ -201,6 +201,15 @@ class DataBuffer(threading.Thread):
                 supply_voltage, battery_status = self.battery_charger.read_battery_status("measured_supply_voltage")
                 print(f"Supply voltage: {supply_voltage:.2f} V, status: {battery_status}")
 
+                if SAVE_DATA:
+                    data_saver.add_entry({
+                        'charge_voltage_setting': charge_voltage_setting,
+                        'charge_current_setting': charge_current_setting,
+                        'battery_voltage': battery_voltage,
+                        'battery_current': battery_current,
+                        'supply_voltage': supply_voltage
+                    }, 'battery')
+
             # Timing control
             next_time += self.period
             sleep_time = next_time - time.perf_counter()

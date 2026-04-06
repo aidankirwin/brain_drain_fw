@@ -2,7 +2,7 @@ import pandas as pd
 import time
 
 SAVE_DATA = True
-FILE_NAME = 'apr4_irrigation_test1'
+FILE_NAME = 'apr5_battery_test_1'
 
 # global/singleton data saver
 # saves data (either passed as a buffer of 25 values or a single value) to one of 2 lists (sensor or motor), updates csv files every 5 minutes or when the program is stopped
@@ -13,6 +13,7 @@ class DataSaver:
         self.sensor_data = []
         self.motor_data = []
         self.irrigate_data = []
+        self.battery_data = []
 
         self.start_time = time.time()
         self.last_updated = time.time()
@@ -32,6 +33,9 @@ class DataSaver:
         elif type == 'irrigate':
             entry['time'] = entry_time
             self.irrigate_data.append(entry)
+        elif type == 'battery':
+            entry['time'] = entry_time
+            self.battery_data.append(entry)
 
         if time.time() - self.last_updated > 10:  # Update every 10s
             self.update_csv()
@@ -52,5 +56,9 @@ class DataSaver:
             irrigate_df = pd.DataFrame(self.irrigate_data)
             irrigate_df.to_csv(f'{self.filename}_irrigate.csv', mode='a', header=not pd.io.common.file_exists(f'{self.filename}_irrigate.csv'), index=False)
             self.irrigate_data = []  # Clear the buffer after saving
+        if self.battery_data:
+            battery_df = pd.DataFrame(self.battery_data)
+            battery_df.to_csv(f'{self.filename}_battery.csv', mode='a', header=not pd.io.common.file_exists(f'{self.filename}_battery.csv'), index=False)
+            self.battery_data = []  # Clear the buffer after saving
 
 data_saver = DataSaver(FILE_NAME)
