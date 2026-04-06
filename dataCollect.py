@@ -184,31 +184,31 @@ class DataBuffer(threading.Thread):
 
             # BATTERY CHARGER CHECK
             # only check the battery charger every 5 seconds
-            if time.time() - self.last_battery_check > 1:
-                self.last_battery_check = time.time()
+            # if time.time() - self.last_battery_check > 1:
+            #     self.last_battery_check = time.time()
 
-                # check the charge voltage and current settings
-                charge_voltage_setting, battery_status = self.battery_charger.read_battery_status("charge_voltage_setting")
-                print(f"Charge voltage setting: {charge_voltage_setting:.2f} V, status: {battery_status}")
-                charge_current_setting, battery_status = self.battery_charger.read_battery_status("charge_current_setting")
-                print(f"Charge current setting: {charge_current_setting:.2f} A, status: {battery_status}")
+            #     # check the charge voltage and current settings
+            #     charge_voltage_setting, battery_status = self.battery_charger.read_battery_status("charge_voltage_setting")
+            #     print(f"Charge voltage setting: {charge_voltage_setting:.2f} V, status: {battery_status}")
+            #     charge_current_setting, battery_status = self.battery_charger.read_battery_status("charge_current_setting")
+            #     print(f"Charge current setting: {charge_current_setting:.2f} A, status: {battery_status}")
 
-                # read voltage, current, supply voltage, and status
-                battery_voltage, battery_status = self.battery_charger.read_battery_status("measured_battery_voltage")
-                print(f"Battery voltage: {battery_voltage:.2f} V, status: {battery_status}")
-                battery_current, battery_status = self.battery_charger.read_battery_status("measured_battery_current")
-                print(f"Battery current: {battery_current:.2f} A, status: {battery_status}")
-                supply_voltage, battery_status = self.battery_charger.read_battery_status("measured_supply_voltage")
-                print(f"Supply voltage: {supply_voltage:.2f} V, status: {battery_status}")
+            #     # read voltage, current, supply voltage, and status
+            #     battery_voltage, battery_status = self.battery_charger.read_battery_status("measured_battery_voltage")
+            #     print(f"Battery voltage: {battery_voltage:.2f} V, status: {battery_status}")
+            #     battery_current, battery_status = self.battery_charger.read_battery_status("measured_battery_current")
+            #     print(f"Battery current: {battery_current:.2f} A, status: {battery_status}")
+            #     supply_voltage, battery_status = self.battery_charger.read_battery_status("measured_supply_voltage")
+            #     print(f"Supply voltage: {supply_voltage:.2f} V, status: {battery_status}")
 
-                if SAVE_DATA:
-                    data_saver.add_entry({
-                        'charge_voltage_setting': charge_voltage_setting,
-                        'charge_current_setting': charge_current_setting,
-                        'battery_voltage': battery_voltage,
-                        'battery_current': battery_current,
-                        'supply_voltage': supply_voltage
-                    }, 'battery')
+            #     if SAVE_DATA:
+            #         data_saver.add_entry({
+            #             'charge_voltage_setting': charge_voltage_setting,
+            #             'charge_current_setting': charge_current_setting,
+            #             'battery_voltage': battery_voltage,
+            #             'battery_current': battery_current,
+            #             'supply_voltage': supply_voltage
+            #         }, 'battery')
 
             # Timing control
             next_time += self.period
