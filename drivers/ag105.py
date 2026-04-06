@@ -35,6 +35,7 @@ class AG105:
         }
 
         self.charge_voltage_settings = {
+            0: 4.2,
             1: 3.9,
             2: 4.0,
             3: 4.1,
@@ -62,6 +63,7 @@ class AG105:
             3: 1750,
             2: 2000,
             1: 2250,
+            0: 1000
         }
 
     def read_raw(self, register_byte):
@@ -104,4 +106,4 @@ class AG105:
         else:
             data = None
 
-        return float(data), status
+        return data, status
