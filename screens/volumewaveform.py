@@ -69,6 +69,51 @@ class VolumeWaveform(LayoutDesigns):
         # self.old_icp_min = scaled_min
         # self.old_icp_max = scaled_max
 
+
+    def draw_x_axis_scale(self):
+        self.waveform.delete("x_axis")
+
+        y = self.waveform_height
+
+        # Main axis line
+        self.waveform.create_line(
+            -1, y, self.waveform_width, y,
+            fill="black", width=2, tags="x_axis"
+        )
+
+        tick_spacing = 5  # seconds
+
+        t = 0
+        while t <= self.max_time:
+            x = self.time_to_x(t)
+
+            # Tick mark
+            self.waveform.create_line(
+                x, y, x, y + 10,
+                fill="black", tags="x_axis"
+            )
+
+            # Label
+            x_offset = 3 if t == 0 else 0
+            self.waveform.create_text(
+                x + x_offset, y + 25,
+                text=f"{int(t)}",
+                font=("Arial", 10),
+                tags="x_axis",
+                anchor="w" if t == 0 else "center"
+            )
+
+            t += tick_spacing
+
+        # Axis label
+        self.waveform.create_text(
+            self.waveform_width / 2,
+            y + 40,
+            text="Time (s)",
+            font=("Arial", 12, "bold"),
+            tags="x_axis"
+        )
+
     def toggle_drainage(self, event=None):
         if self.is_draining:
             self.set_btn.config(text="Start Drainage", bg="#f3eaf9", fg="#8e44ad")
@@ -278,6 +323,16 @@ class VolumeWaveform(LayoutDesigns):
         )
         self.y_axis_canvas.pack(side="left", padx=(1, 0), pady=1)
 
+        self.waveform_width = 575
+        self.waveform_height = 500
+        self.y_axis_canvas.create_text(
+            35, self.waveform_height / 2,   # center of the canvas
+            text="Pressure (mmHg)",
+            angle=90,                       # rotate text vertically
+            font=("Arial", 12, "bold"),
+            fill="black"
+        )
+
         self.waveform = tk.Canvas(
             grid_container_2,
             bg="white",
@@ -286,8 +341,6 @@ class VolumeWaveform(LayoutDesigns):
         self.waveform.pack(side="left", fill="both", expand=True, padx=(0, 1), pady=1)
 
         # For waveform drawing
-        self.waveform_width = 575
-        self.waveform_height = 500
         self.waveform_buffer = [0] * self.waveform_width  # Start with midline
 
         # --- BOTTOM BUTTONS ---
