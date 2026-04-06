@@ -425,6 +425,7 @@ class VolumeWaveform(LayoutDesigns):
 
         # Redraw scale in case ICP range has changed
         self.draw_y_axis_scale(scaled_min, scaled_max)
+        self.draw_x_axis_scale()
 
         # Convert waveform_buffer → canvas coordinates
         points = []
