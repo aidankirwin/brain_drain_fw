@@ -76,8 +76,11 @@ class ICPWaveform(LayoutDesigns):
         y = self.waveform_height
 
         # Main axis line
+        bottom_pad = 20  # pixels of space between waveform and x-axis
+
         self.waveform.create_line(
-            0, y, self.waveform_width, y,
+            -1, self.waveform_height - bottom_pad,
+            self.waveform_width, self.waveform_height - bottom_pad,
             fill="black", width=2, tags="x_axis"
         )
 
@@ -106,7 +109,7 @@ class ICPWaveform(LayoutDesigns):
         # Axis label
         self.waveform.create_text(
             self.waveform_width / 2,
-            y + 30,
+            y + 35,
             text="Time (s)",
             font=("Arial", 12, "bold"),
             tags="x_axis"
@@ -320,7 +323,7 @@ class ICPWaveform(LayoutDesigns):
         self.waveform_width = 575
         self.waveform_height = 500
         self.y_axis_canvas.create_text(
-            45, self.waveform_height / 3,   # center of the canvas
+            35, self.waveform_height / 2,   # center of the canvas
             text="Pressure (mmHg)",
             angle=90,                       # rotate text vertically
             font=("Arial", 10, "bold"),
