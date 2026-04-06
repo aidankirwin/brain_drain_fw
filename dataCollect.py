@@ -184,7 +184,7 @@ class DataBuffer(threading.Thread):
 
             # BATTERY CHARGER CHECK
             # only check the battery charger every 5 seconds
-            if time.time() - self.last_battery_check > 5:
+            if time.time() - self.last_battery_check > 1:
                 self.last_battery_check = time.time()
 
                 # check the charge voltage and current settings

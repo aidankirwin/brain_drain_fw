@@ -75,7 +75,7 @@ class AG105:
         }
 
         # on startup, set the charge voltage to 12.6 V
-        self.write_raw(self.register_bytes["charge_voltage_setting"], 12)  # Set to 12.6 V
+        self.write_raw(self.register_bytes["charge_voltage_setting"], 10)  # Set to 12.6 V
 
     def status_change_callback(self):
         # report pulses on the status pin
