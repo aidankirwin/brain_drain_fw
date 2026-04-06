@@ -66,12 +66,18 @@ class AG105:
             0: 1000
         }
 
+        # on startup, set the charge voltage to 12.6 V
+        self.write_raw(self.register_bytes["charge_voltage_setting"], 12)  # Set to 12.6 V
+
     def read_raw(self, register_byte):
         result = bytearray(2)
         self.i2c.writeto(self.address, bytes([register_byte]))
         self.i2c.readfrom_into(self.address, result)
         print(f"RAW: {[hex(b) for b in result]}")
         return result
+    
+    def write_raw(self, register_byte, data_byte):
+        self.i2c.writeto(self.address, bytes([register_byte, data_byte]))
 
     def read_battery_status(self, register_name):
         if register_name not in self.register_bytes:
