@@ -140,6 +140,7 @@ class DataBuffer(threading.Thread):
 
         # Battery charger
         self.battery_charger = AG105()
+        time.sleep(1)  # Allow time for battery charger to initialize
         self.last_battery_check = time.time()
 
         self.start_time = time.time()
@@ -185,7 +186,7 @@ class DataBuffer(threading.Thread):
             # only check the battery charger every 5 seconds
             if time.time() - self.last_battery_check > 5:
                 self.last_battery_check = time.time()
-                
+
                 # check the charge voltage and current settings
                 charge_voltage_setting, battery_status = self.battery_charger.read_battery_status("charge_voltage_setting")
                 print(f"Charge voltage setting: {charge_voltage_setting:.2f} V, status: {battery_status}")
