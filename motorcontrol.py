@@ -57,6 +57,9 @@ class MotorControl(threading.Thread):
             compliance = 3
             flow = compliance * icp_difference
 
+            # set flow rate of 10 for battery test
+            flow = 10
+
             # change in flow = change in pressure * compliance
             # for now assume compliance = 3
 
