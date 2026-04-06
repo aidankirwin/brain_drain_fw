@@ -76,11 +76,8 @@ class ICPWaveform(LayoutDesigns):
         y = self.waveform_height
 
         # Main axis line
-        bottom_pad = 20  # pixels of space between waveform and x-axis
-
         self.waveform.create_line(
-            -1, self.waveform_height - bottom_pad,
-            self.waveform_width, self.waveform_height - bottom_pad,
+            -1, y, self.waveform_width, y,
             fill="black", width=2, tags="x_axis"
         )
 
