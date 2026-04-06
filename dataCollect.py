@@ -139,7 +139,7 @@ class DataBuffer(threading.Thread):
         # self.channels = [0]
 
         # Battery charger
-        self.battery_charger = AG105()
+        # self.battery_charger = AG105()
         time.sleep(1)  # Allow time for battery charger to initialize
         self.last_battery_check = time.time()
 
