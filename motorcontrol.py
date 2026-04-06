@@ -52,10 +52,10 @@ class MotorControl(threading.Thread):
         icp_difference = 0
         delay_time = None
         if len(control_batch) > 0:
-            icp_difference = sum(control_batch) / len(control_batch) - self.target_icp
+            # icp_difference = sum(control_batch) / len(control_batch) - self.target_icp
 
-            compliance = 3
-            flow = compliance * icp_difference
+            # compliance = 3
+            # flow = compliance * icp_difference
 
             # set flow rate of 10 for battery test
             flow = 10
