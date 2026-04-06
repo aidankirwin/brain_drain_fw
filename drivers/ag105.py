@@ -27,9 +27,41 @@ class AG105:
         }
 
         self.register_bytes = {
+            "charge_current_setting": 0x00,
+            "charge_voltage_setting": 0x01,
             "measured_battery_voltage": 0x05,
             "measured_battery_current": 0x06,
             "measured_supply_voltage": 0x07
+        }
+
+        self.charge_voltage_settings = {
+            1: 3.9,
+            2: 4.0,
+            3: 4.1,
+            4: 4.2,
+            5: 7.8,
+            6: 8.0,
+            7: 8.2,
+            8: 8.4,
+            9: 11.7,
+            10: 12.0,
+            11: 12.3,
+            12: 12.6
+        }
+
+        self.charge_current_settings = {
+            12: 100,
+            11: 150,
+            10: 200,
+            9: 250,
+            8: 500,
+            7: 750,
+            6: 1000,
+            5: 1250,
+            4: 1500,
+            3: 1750,
+            2: 2000,
+            1: 2250,
         }
 
     def read_raw(self, register_byte):
@@ -65,6 +97,10 @@ class AG105:
             data = data_byte * 0.011 # Convert to amps
         elif register_name == "measured_supply_voltage":
             data = data_byte * 0.141  # Convert to volts
+        elif register_name == "charge_current_setting":
+            data = self.charge_current_settings.get(data_byte, None)
+        elif register_name == "charge_voltage_setting":
+            data = self.charge_voltage_settings.get(data_byte, None)
         else:
             data = None
 
