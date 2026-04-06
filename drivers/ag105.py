@@ -4,8 +4,15 @@ import busio
 
 class AG105:
     def __init__(self):
+        # Initialize I2C communication
         self.i2c = busio.I2C(board.SCL, board.SDA)
         self.address = 0x30  # I2C address of the AG105 charger
+
+        # The status pin is connected to GPIO pin 17 and is used to detect changes in the battery status
+        self.status_pin = 17
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(self.status_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.add_event_detect(self.status_pin, GPIO.FALLING, callback=self.status_change_callback, bouncetime=200)
 
         # every I2C read involves the following:
         # - module address (0x30)
@@ -68,6 +75,13 @@ class AG105:
 
         # on startup, set the charge voltage to 12.6 V
         self.write_raw(self.register_bytes["charge_voltage_setting"], 12)  # Set to 12.6 V
+
+    def status_change_callback(self):
+        # report pulses on the status pin
+        print("Battery status pulse detected")
+
+    def read_status_pin(self):
+        return GPIO.input(self.status_pin)
 
     def read_raw(self, register_byte):
         result = bytearray(2)
