@@ -74,8 +74,8 @@ class MotorControl(threading.Thread):
             # delay_time = 1
             # delay_time = None
 
-        if icp_difference <= 0 or not is_draining:
-            delay_time = None  # No drainage if ICP is below target or if drainage is turned off
+        # if icp_difference <= 0 or not is_draining:
+        #     delay_time = None  # No drainage if ICP is below target or if drainage is turned off
         return delay_time
     
     def update_target_icp(self, new_target):
