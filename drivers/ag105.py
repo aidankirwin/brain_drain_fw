@@ -104,4 +104,4 @@ class AG105:
         else:
             data = None
 
-        return data, status
+        return float(data), status
