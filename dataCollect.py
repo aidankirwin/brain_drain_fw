@@ -180,7 +180,7 @@ class DataBuffer(threading.Thread):
                 data_saver.add_entry(readings, 'sensor')
 
             loop_end = time.perf_counter()
-            print(f"Loop period: {loop_end - loop_start:.6f}s")
+            # print(f"Loop period: {loop_end - loop_start:.6f}s")
 
             # BATTERY CHARGER CHECK
             # only check the battery charger every 5 seconds
