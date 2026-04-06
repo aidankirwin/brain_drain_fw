@@ -6,8 +6,8 @@ import sys
 
 from dataSaver import data_saver, SAVE_DATA
 
-mode = 'DEMO'
-# DEMO, MOTOR_TEST, SENSOR_TEST
+mode = 'BATTERY_TEST'
+# DEMO, MOTOR_TEST, SENSOR_TEST, BATTERY_TEST
 
 def cleanup(*args):
     global running

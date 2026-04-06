@@ -10,10 +10,10 @@ class AG105:
 
         # The status pin is connected to GPIO pin 17 and is used to detect changes in the battery status
         self.status_pin = 17
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self.status_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.remove_event_detect(17)
-        GPIO.add_event_detect(self.status_pin, GPIO.RISING, callback=self.status_change_callback, bouncetime=200)
+        # GPIO.setmode(GPIO.BCM)
+        # GPIO.setup(self.status_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        # GPIO.remove_event_detect(17)
+        # GPIO.add_event_detect(self.status_pin, GPIO.RISING, callback=self.status_change_callback, bouncetime=200)
 
         # every I2C read involves the following:
         # - module address (0x30)

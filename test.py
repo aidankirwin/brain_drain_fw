@@ -16,6 +16,7 @@ import RPi.GPIO as GPIO
 from gpiozero import PWMOutputDevice, AngularServo
 
 import pickle
+import matplotlib.pyplot as plt
 
 def sensor_test_loop():
     period = 0.0033  # ~300 Hz
@@ -27,6 +28,37 @@ def sensor_test_loop():
     i2c = busio.I2C(board.SCL, board.SDA)
     ads = ADS.ADS1115(i2c)
     ads.data_rate = 860
+
+def battery_test_loop():
+    pin = 17
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
+    # make a realtime plot of the battery status pin, sample the value every 10 ms
+    # make sure plot is non-blocking and updates in real time
+
+    plt.ion()
+    fig, ax = plt.subplots()
+    xdata, ydata = [], []
+    line, = ax.plot(xdata, ydata)
+    ax.set_ylim(-0.5, 1.5)
+    ax.set_xlabel('Time (s)')
+    ax.set_ylabel('Battery Status Pin')
+    ax.set_title('Battery Status Pin Over Time')
+
+    try:
+        while True:
+            print(GPIO.input(pin))
+            xdata.append(time.time())
+            ydata.append(GPIO.input(pin))
+            line.set_xdata(xdata)
+            line.set_ydata(ydata)
+            ax.relim()
+            ax.autoscale_view()
+            plt.draw()
+            time.sleep(0.001)
+    except KeyboardInterrupt:
+        GPIO.cleanup()
 
 def motor_test_loop():
 
@@ -152,6 +184,9 @@ def test(test_type='MOTOR_TEST'):
         thread.start()
     elif test_type == 'SENSOR_TEST':
         thread = threading.Thread(target=motor_test_loop, daemon=True)
+        thread.start()
+    elif test_type == 'BATTERY_TEST':
+        thread = threading.Thread(target=battery_test_loop, daemon=True)
         thread.start()
 
     # Start Tkinter UI
