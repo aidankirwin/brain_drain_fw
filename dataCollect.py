@@ -187,6 +187,10 @@ class DataBuffer(threading.Thread):
                 self.last_battery_check = time.time()
                 battery_voltage, battery_status = self.battery_charger.read_battery_status("measured_battery_voltage")
                 print(f"Battery voltage: {battery_voltage:.2f} V, status: {battery_status}")
+                battery_current, battery_status = self.battery_charger.read_battery_status("measured_battery_current")
+                print(f"Battery current: {battery_current:.2f} A, status: {battery_status}")
+                supply_voltage, battery_status = self.battery_charger.read_battery_status("measured_supply_voltage")
+                print(f"Supply voltage: {supply_voltage:.2f} V, status: {battery_status}")
 
             # Timing control
             next_time += self.period
