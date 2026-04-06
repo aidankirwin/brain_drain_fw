@@ -149,38 +149,38 @@ class DataBuffer(threading.Thread):
         next_time = time.perf_counter()
 
         while self.running:
-            # loop_start = time.perf_counter()
+            loop_start = time.perf_counter()
 
-            # # ADC READS
-            # readings = {}  # For saving data
-            # for ch in self.channels:
-            #     value = self.read_channel(ch)
+            # ADC READS
+            readings = {}  # For saving data
+            for ch in self.channels:
+                value = self.read_channel(ch)
 
-            #     if ch == 0:
-            #         self.add_data("icp", "display_icpscreen", value)
-            #         self.add_data("icp", "display_volscreen", value)
-            #         self.add_data("icp", "control", value)
-            #         readings['icp'] = value
+                if ch == 0:
+                    self.add_data("icp", "display_icpscreen", value)
+                    self.add_data("icp", "display_volscreen", value)
+                    self.add_data("icp", "control", value)
+                    readings['icp'] = value
 
-            #     elif ch == 1:
-            #         # drainage load cell
-            #         self.add_data("load1", "display", value[0])  # weight
-            #         self.add_data("load1", "control", value[0])
-            #         self.add_data("load1", "flow", value[1])
-            #         readings['load1'] = value[0]
+                elif ch == 1:
+                    # drainage load cell
+                    self.add_data("load1", "display", value[0])  # weight
+                    self.add_data("load1", "control", value[0])
+                    self.add_data("load1", "flow", value[1])
+                    readings['load1'] = value[0]
 
-            #     elif ch == 2:
-            #         # flushing load cell
-            #         self.add_data("load2", "display", value[0])
-            #         self.add_data("load2", "control", value[0])
-            #         self.add_data("load2", "flow", value[1])
-            #         readings['load2'] = value[0]
+                elif ch == 2:
+                    # flushing load cell
+                    self.add_data("load2", "display", value[0])
+                    self.add_data("load2", "control", value[0])
+                    self.add_data("load2", "flow", value[1])
+                    readings['load2'] = value[0]
 
-            # if SAVE_DATA:
-            #     data_saver.add_entry(readings, 'sensor')
+            if SAVE_DATA:
+                data_saver.add_entry(readings, 'sensor')
 
-            # loop_end = time.perf_counter()
-            # print(f"Loop period: {loop_end - loop_start:.6f}s")
+            loop_end = time.perf_counter()
+            print(f"Loop period: {loop_end - loop_start:.6f}s")
 
             # BATTERY CHARGER CHECK
             # only check the battery charger every 5 seconds
