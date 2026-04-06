@@ -94,13 +94,11 @@ class ICPWaveform(LayoutDesigns):
             )
 
             # Label
-            x_offset = 3 if t == 0 else 0
             self.waveform.create_text(
-                x + x_offset, y + 25,
+                x, y + 25,
                 text=f"{int(t)}",
                 font=("Arial", 10),
-                tags="x_axis",
-                anchor="w" if t == 0 else "center"
+                tags="x_axis"
             )
 
             t += tick_spacing
