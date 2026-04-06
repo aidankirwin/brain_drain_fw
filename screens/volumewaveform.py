@@ -423,7 +423,7 @@ class VolumeWaveform(LayoutDesigns):
         icp_min = min(self.waveform_buffer)
         icp_max = max(self.waveform_buffer) + 1  # +1 to avoid division by zero if all values are the same
 
-        scaled_min = icp_min
+        scaled_min = icp_min - ((icp_max - icp_min)*0.02)
         scaled_max = icp_max
 
         # Redraw scale in case ICP range has changed
