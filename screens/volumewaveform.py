@@ -68,7 +68,8 @@ class VolumeWaveform(LayoutDesigns):
         
         # self.old_icp_min = scaled_min
         # self.old_icp_max = scaled_max
-
+    def time_to_x(self, t):
+        return (t / self.max_time) * self.waveform_width
 
     def draw_x_axis_scale(self):
         self.waveform.delete("x_axis")
@@ -339,9 +340,11 @@ class VolumeWaveform(LayoutDesigns):
             height=550
         )
         self.waveform.pack(side="left", fill="both", expand=True, padx=(0, 1), pady=1)
-
+        
         # For waveform drawing
         self.waveform_buffer = [0] * self.waveform_width  # Start with midline
+
+        self.max_time = self.waveform_width / self.data_buffer.fs
 
         # --- BOTTOM BUTTONS ---
         self.set_btn = tk.Label(self, text="Stop Drainage", font=("Helvetica", 20), bg="black", 
