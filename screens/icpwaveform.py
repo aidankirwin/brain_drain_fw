@@ -108,7 +108,7 @@ class ICPWaveform(LayoutDesigns):
         # Axis label
         self.waveform.create_text(
             self.waveform_width / 2,
-            y + 35,
+            y + 38,
             text="Time (s)",
             font=("Arial", 12, "bold"),
             tags="x_axis"
@@ -418,7 +418,7 @@ class ICPWaveform(LayoutDesigns):
         icp_min = min(self.waveform_buffer)
         icp_max = max(self.waveform_buffer) + 1  # +1 to avoid division by zero if all values are the same
 
-        scaled_min = icp_min - ((icp_max - icp_min)*0.05)
+        scaled_min = icp_min - ((icp_max - icp_min)*0.02)
         scaled_max = icp_max
 
         # Redraw scale in case ICP range has changed
