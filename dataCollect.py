@@ -244,7 +244,7 @@ class DataBuffer(threading.Thread):
             reading_arr = reading_arr * self.lc_scale + self.lc_offset
 
             if self.load1_tare is not None:
-                reading_arr = reading_arr - self.load1_tare
+                reading_arr = reading_arr - self.load1_tare - 15
                 reading_arr = np.atleast_1d(np.max([0.0, reading_arr[0]]))
 
             # if self.z_load1 is None:
@@ -262,7 +262,7 @@ class DataBuffer(threading.Thread):
             #     print(x[0])
             #     x[1] = 1
             # return x[0], x[1]
-            return 0.0, 1
+            return reading_arr[0], 1
 
         elif ch == 2:  # load cell 2
             reading = float(AnalogIn(self.ads, ads1x15.Pin.A2).value)
