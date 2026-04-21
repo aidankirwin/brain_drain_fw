@@ -262,7 +262,7 @@ class DataBuffer(threading.Thread):
             #     print(x[0])
             #     x[1] = 1
             # return x[0], x[1]
-            return reading_arr[0], 1
+            return 0.0, 1
 
         elif ch == 2:  # load cell 2
             reading = float(AnalogIn(self.ads, ads1x15.Pin.A2).value)
