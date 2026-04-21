@@ -57,9 +57,6 @@ class MotorControl(threading.Thread):
             compliance = 3
             flow = compliance * icp_difference
 
-            # set flow rate of 10 for battery test
-            flow = 10
-
             # change in flow = change in pressure * compliance
             # for now assume compliance = 3
 
@@ -74,8 +71,8 @@ class MotorControl(threading.Thread):
             # delay_time = 1
             # delay_time = None
 
-        # if icp_difference <= 0 or not is_draining:
-        #     delay_time = None  # No drainage if ICP is below target or if drainage is turned off
+        if icp_difference <= 0 or not is_draining:
+            delay_time = None  # No drainage if ICP is below target or if drainage is turned off
         return delay_time
     
     def update_target_icp(self, new_target):
@@ -94,7 +91,7 @@ class MotorControl(threading.Thread):
         data_saver.add_entry({'irrigate': True}, 'irrigate')
         for i in range(16):
                 print("motor go")
-                self.motor.value = 200/255.0  # Convert Arduino PWM (0–255) to 0–1
+                self.motor.value = 200/255.0
                 time.sleep(1)
         data_saver.add_entry({'irrigate': False}, 'irrigate')
 
